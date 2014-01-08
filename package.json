@@ -1,0 +1,31 @@
+{
+  "name": "gulp-manifest",
+  "version": "0.0.1",
+  "description": "Generate HTML5 Cache Manifest files",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hillmanov/gulp-manifest"
+  },
+  "keywords": [
+    "gulp",
+    "html5",
+    "manifest"
+  ],
+  "author": "Scott Hillman",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "58e17b7e8757385a1988e30735c46c86e78a2aba",
+  "devDependencies": {
+    "should": "~2.1.1",
+    "mocha": "~1.16.2"
+  },
+  "dependencies": {
+    "event-stream": "~3.0.20",
+    "through": "~2.3.4",
+    "gulp-util": "~2.2.6"
+  }
+}
