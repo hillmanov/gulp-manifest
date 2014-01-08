@@ -74,8 +74,6 @@ function manifest(options) {
     if (options.hash) {
       contents.push('\n# hash: ' + hasher.digest("hex"));
     }
-
-    console.log(contents.join(lineBreak));
     
     var manifestContents = contents.join(lineBreak);
 
