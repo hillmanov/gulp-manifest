@@ -6,35 +6,26 @@ var fs             = require('fs'),
     mocha          = require('mocha'),
     manifestPlugin = require('../');
 
-
+function createFakeFile(filename) {
+  return new gutil.File({
+    path: path.resolve('test/fixture/' + filename),
+    cwd: path.resolve('test/'),
+    base: path.resolve('test/fixture/'),
+    contents: new Buffer('notimportant')
+  });
+}
 
 describe('gulp-manifest', function() {
 
   it('Should generate a manifest file', function(done) {
 
-    var fakeFile1 = new gutil.File({
-      path: './test/fixture/file1.js',
-      cwd: './test/',
-      base: './test/fixture/',
-      contents: new Buffer('notimportant')
-    });
-    
-    var fakeFile2 = new gutil.File({
-      path: './test/fixture/file2.js',
-      cwd: './test/',
-      base: './test/fixture/',
-      contents: new Buffer('notimportant')
-    });
-
-    var fakeFile3 = new gutil.File({
-      path: './test/fixture/file3.js',
-      cwd: './test/',
-      base: './test/fixture/',
-      contents: new Buffer('notimportant')
-    });
+    var fakeFile1 = createFakeFile('file1.js');
+    var fakeFile2 = createFakeFile('file2.js');
+    var fakeFile3 = createFakeFile('file3.js');
 
     var stream = manifestPlugin({
       filename: 'cache.manifest',
+      exclude: 'file2.js',
       hash: true,
       network: ['http://*', 'https://*', '*'],
       preferOnline: true
@@ -47,9 +38,9 @@ describe('gulp-manifest', function() {
       var contents = data.contents.toString();
       contents.should.startWith('CACHE MANIFEST');
       contents.should.contain('CACHE:');
-      contents.should.contain(fakeFile1.path);
-      contents.should.contain(fakeFile2.path);
-      contents.should.contain(fakeFile3.path);
+      contents.should.contain('file1.js');
+      contents.should.not.contain('file2.js');
+      contents.should.contain('file3.js');
       contents.should.contain('# hash: ');
     });
 

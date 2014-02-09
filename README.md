@@ -87,7 +87,9 @@ This will ensure that application cache invalidates whenever actual file content
         .pipe(manifest({
           hash: true,
           preferOnline: true,
-          network: ['http://*', 'https://*', '*']
+          network: ['http://*', 'https://*', '*'],
+          filename: 'app.manifest',
+          exclude: 'app.manifest'
          }))
         .pipe(gulp.dest('build'));
     });
