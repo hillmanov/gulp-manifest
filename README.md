@@ -21,6 +21,12 @@ npm install gulp-manifest --save-dev
 
 This controls how this task (and its helpers) operate and should contain key:value pairs, see options below.
 
+#### options.filename
+Type: `String`  
+Default: `"app.manifest"`
+
+Set name of the Cache Manifest file.
+
 #### options.cache
 Type: `String`  
 Default: `undefined`  
@@ -83,7 +89,7 @@ This will ensure that application cache invalidates whenever actual file content
           preferOnline: true,
           network: ['http://*', 'https://*', '*']
          }))
-        .pipe(gulp.dest('app.manifest'));
+        .pipe(gulp.dest('build'));
     });
 
 
