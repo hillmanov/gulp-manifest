@@ -4,12 +4,15 @@ var es        = require('event-stream'),
     through   = require('through'),
     gutil     = require('gulp-util'),
     hasher    = require('crypto').createHash('sha256'),
+    path      = require('path'),
     lineBreak = '\n';
  
 
 function manifest(options) {
   var contents = [];
   contents.push('CACHE MANIFEST');
+
+  var filename = options.filename || 'app.manifest';
   
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
@@ -74,10 +77,16 @@ function manifest(options) {
     if (options.hash) {
       contents.push('\n# hash: ' + hasher.digest("hex"));
     }
-    
-    var manifestContents = contents.join(lineBreak);
 
-    this.emit('data', manifestContents);
+    var cwd = process.cwd();
+    var manifestFile = new gutil.File({
+      cwd: cwd,
+      base: cwd,
+      path: path.join(cwd, filename),
+      contents: new Buffer(contents.join(lineBreak)),
+    });
+
+    this.emit('data', manifestFile);
     this.emit('end');
   }
 

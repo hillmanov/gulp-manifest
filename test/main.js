@@ -34,18 +34,26 @@ describe('gulp-manifest', function() {
     });
 
     var stream = manifestPlugin({
+      filename: 'cache.manifest',
       hash: true,
       network: ['http://*', 'https://*', '*'],
       preferOnline: true
     });
 
     stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+      data.relative.should.eql('cache.manifest');
 
-
+      var contents = data.contents.toString();
+      contents.should.startWith('CACHE MANIFEST');
+      contents.should.contain('CACHE:');
+      contents.should.contain(fakeFile1.path);
+      contents.should.contain(fakeFile2.path);
+      contents.should.contain(fakeFile3.path);
+      contents.should.contain('# hash: ');
     });
 
     stream.once('end', function() {
-      
       done();
     });
 
