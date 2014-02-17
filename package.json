@@ -12,6 +12,7 @@
   },
   "keywords": [
     "gulp",
+    "gulpplugin",
     "html5",
     "manifest"
   ],
