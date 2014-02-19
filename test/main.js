@@ -16,13 +16,10 @@ function createFakeFile(filename) {
 }
 
 describe('gulp-manifest', function() {
+  var fileNames = ['file1.js', 'file2.js', 'file3.js', 'file4.js'];
+  var fakeFiles = fileNames.map(createFakeFile);
 
   it('Should generate a manifest file', function(done) {
-
-    var fakeFile1 = createFakeFile('file1.js');
-    var fakeFile2 = createFakeFile('file2.js');
-    var fakeFile3 = createFakeFile('file3.js');
-
     var stream = manifestPlugin({
       filename: 'cache.manifest',
       exclude: 'file2.js',
@@ -41,17 +38,30 @@ describe('gulp-manifest', function() {
       contents.should.contain('file1.js');
       contents.should.not.contain('file2.js');
       contents.should.contain('file3.js');
+      contents.should.contain('file4.js');
       contents.should.contain('# hash: ');
     });
+    stream.once('end', done);
 
-    stream.once('end', function() {
-      done();
+    fakeFiles.forEach(stream.write.bind(stream));
+    stream.end();
+  });
+
+  it('Should exclude multiple files', function(done) {
+    var stream = manifestPlugin({
+      exclude: ['file2.js', 'file4.js'],
     });
 
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.contain('file1.js');
+      contents.should.not.contain('file2.js');
+      contents.should.contain('file3.js');
+      contents.should.not.contain('file4.js');
+    });
+    stream.once('end', done);
 
-    stream.write(fakeFile1);
-    stream.write(fakeFile2);
-    stream.write(fakeFile3);
+    fakeFiles.forEach(stream.write.bind(stream));
     stream.end();
   });
 });

@@ -6,14 +6,14 @@ var es        = require('event-stream'),
     hasher    = require('crypto').createHash('sha256'),
     path      = require('path'),
     lineBreak = '\n';
- 
 
 function manifest(options) {
   var contents = [];
   contents.push('CACHE MANIFEST');
 
   var filename = options.filename || 'app.manifest';
-  
+  var exclude = [].concat(options.exclude || []);
+
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
   }
@@ -35,10 +35,8 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (options.exclude) {
-      if (file.path.indexOf(options.exclude) >= 0) {
-        return;
-      }
+    if (exclude.indexOf(file.relative) >= 0) {
+      return;
     }
 
     contents.push(encodeURI(file.relative));
@@ -59,7 +57,7 @@ function manifest(options) {
 
     // Fallback section
     if (options.fallback) {
-      contents.push(lineBreak);  
+      contents.push(lineBreak);
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
         contents.push(encodeURI(file));
