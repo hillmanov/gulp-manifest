@@ -4,13 +4,16 @@ var es        = require('event-stream'),
     through   = require('through'),
     gutil     = require('gulp-util'),
     hasher    = require('crypto').createHash('sha256'),
+    path      = require('path'),
     lineBreak = '\n';
- 
 
 function manifest(options) {
   var contents = [];
   contents.push('CACHE MANIFEST');
-  
+
+  var filename = options.filename || 'app.manifest';
+  var exclude = [].concat(options.exclude || []);
+
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
   }
@@ -32,13 +35,11 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (options.exclude) {
-      if (options.options.exclude.indexOf(file.path) >= 0) {
-        return;
-      }
+    if (exclude.indexOf(file.relative) >= 0) {
+      return;
     }
 
-    contents.push(encodeURI(file.path));
+    contents.push(encodeURI(file.relative));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
@@ -56,7 +57,7 @@ function manifest(options) {
 
     // Fallback section
     if (options.fallback) {
-      contents.push(lineBreak);  
+      contents.push(lineBreak);
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
         contents.push(encodeURI(file));
@@ -74,10 +75,16 @@ function manifest(options) {
     if (options.hash) {
       contents.push('\n# hash: ' + hasher.digest("hex"));
     }
-    
-    var manifestContents = contents.join(lineBreak);
 
-    this.emit('data', manifestContents);
+    var cwd = process.cwd();
+    var manifestFile = new gutil.File({
+      cwd: cwd,
+      base: cwd,
+      path: path.join(cwd, filename),
+      contents: new Buffer(contents.join(lineBreak)),
+    });
+
+    this.emit('data', manifestFile);
     this.emit('end');
   }
 
