@@ -38,7 +38,7 @@ function manifest(options) {
       }
     }
 
-    contents.push(encodeURI(file.path.substr(file.base.length)));
+    contents.push(encodeURI(file.path));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
