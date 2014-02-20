@@ -8,6 +8,7 @@ var es        = require('event-stream'),
     lineBreak = '\n';
 
 function manifest(options) {
+  options = options || {};
   var contents = [];
   contents.push('CACHE MANIFEST');
 
