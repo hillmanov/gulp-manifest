@@ -64,4 +64,21 @@ describe('gulp-manifest', function() {
     fakeFiles.forEach(stream.write.bind(stream));
     stream.end();
   });
+
+  it('Should work with hash multiple times', function (done) {
+    var pending = 2;
+    function generateWithHash() {
+      var stream = manifestPlugin({ hash: true });
+      stream.on('data', function (data) {
+        data.contents.toString().should.contain('# hash: ');
+      });
+      stream.once('end', function () {
+        if (--pending <= 0) done();
+      });
+      fakeFiles.forEach(stream.write.bind(stream));
+      stream.end();
+    }
+    generateWithHash();
+    generateWithHash();
+  });
 });
