@@ -3,7 +3,7 @@
 var es        = require('event-stream'),
     through   = require('through'),
     gutil     = require('gulp-util'),
-    hasher    = require('crypto').createHash('sha256'),
+    crypto    = require('crypto'),
     path      = require('path'),
     lineBreak = '\n';
 
@@ -14,6 +14,7 @@ function manifest(options) {
 
   var filename = options.filename || 'app.manifest';
   var exclude = [].concat(options.exclude || []);
+  var hasher = crypto.createHash('sha256');
 
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
