@@ -5,6 +5,7 @@ var es        = require('event-stream'),
     gutil     = require('gulp-util'),
     crypto    = require('crypto'),
     path      = require('path'),
+    quotemeta = require('quotemeta'),
     lineBreak = '\n';
 
 function manifest(options) {
@@ -15,6 +16,17 @@ function manifest(options) {
   var filename = options.filename || 'app.manifest';
   var exclude = [].concat(options.exclude || []);
   var hasher = crypto.createHash('sha256');
+  var replacePathSeparator;
+  if (path.sep !== '/') {
+    var re = new RegExp(quotemeta(path.sep), 'g');
+    replacePathSeparator = function(path) {
+      return path.replace(re, '/');
+    };
+  } else {
+    replacePathSeparator = function(path) {
+      return path;
+    };
+  }
 
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
@@ -29,8 +41,12 @@ function manifest(options) {
 
   if (options.cache) {
     options.cache.forEach(function (file) {
-      contents.push(encodeURI(file));
+      contents.push(encodePath(file));
     });
+  }
+
+  function encodePath(path) {
+    return encodeURI(replacePathSeparator(path));
   }
 
   function writeToManifest(file) {
@@ -41,7 +57,7 @@ function manifest(options) {
       return;
     }
 
-    contents.push(encodeURI(file.relative));
+    contents.push(encodePath(file.relative));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
@@ -54,7 +70,7 @@ function manifest(options) {
     contents.push(lineBreak);
     contents.push('NETWORK:');
     options.network.forEach(function (file) {
-      contents.push(encodeURI(file));
+      contents.push(encodePath(file));
     });
 
     // Fallback section
@@ -62,7 +78,7 @@ function manifest(options) {
       contents.push(lineBreak);
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
-        contents.push(encodeURI(file));
+        contents.push(encodePath(file));
       });
     }
 
