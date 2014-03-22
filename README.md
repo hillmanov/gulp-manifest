@@ -79,6 +79,12 @@ Adds a sha256 hash of all `src` files (actual contents) as a comment.
 
 This will ensure that application cache invalidates whenever actual file contents change (it's recommented to set `timestamp` to `false` when `hash` is used).
 
+#### options.absolutePaths
+Type: `Boolean`
+Default: `undefined`
+
+Prefer absolute file paths in the manifest file, e.g: `/js/app.js` rather than `js/app.js`.
+
 ### Usage Example
 
 
