@@ -41,7 +41,13 @@ function manifest(options) {
       return;
     }
 
-    contents.push(encodeURI(file.relative));
+    var fileName = file.relative;
+
+    if (options.absolutePaths) {
+      fileName = '/' + fileName;
+    }
+
+    contents.push(encodeURI(fileName));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
