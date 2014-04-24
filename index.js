@@ -5,6 +5,7 @@ var es        = require('event-stream'),
     gutil     = require('gulp-util'),
     crypto    = require('crypto'),
     path      = require('path'),
+    slash     = require('slash'),
     lineBreak = '\n';
 
 function manifest(options) {
@@ -41,7 +42,7 @@ function manifest(options) {
       return;
     }
 
-    contents.push(encodeURI(file.relative));
+    contents.push(encodeURI(slash(file.relative)));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');

@@ -47,6 +47,27 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
+  it('should work with Windows OS file system', function(done) {
+    var stream = manifestPlugin({
+        hash: false
+    });
+
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.contain('fixture/hello.js');
+    });
+    stream.once('end', done);
+
+    stream.write(new gutil.File({
+        path: path.resolve('test\\fixture\\hello.js'),
+        cwd: path.resolve('test/'),
+        base: path.resolve('test/'),
+        contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
   it('Should exclude multiple files', function(done) {
     var stream = manifestPlugin({
       exclude: ['file2.js', 'file4.js'],
