@@ -3,7 +3,7 @@
 
 Big thanks to [Gunther Brunner](https://github.com/gunta/) for writing the [grunt-manifest](https://github.com/gunta/grunt-manifest) plugin. This plugin was heavily influenced by his great work. 
 
-Visit the [Appcache Facts](http://appcachefacts.info/) for more information on Cache Manifest files.
+Visit the [HTML 5 Guide to AppCache](http://www.html5rocks.com/en/tutorials/appcache/beginner/) for more information on Cache Manifest files.
 
 ## Usage
 
