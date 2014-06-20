@@ -13,6 +13,7 @@ function manifest(options) {
   var contents = [];
   contents.push('CACHE MANIFEST');
 
+  var dest = options.dest || '.';
   var filename = options.filename || 'app.manifest';
   var exclude = [].concat(options.exclude || []);
   var hasher = crypto.createHash('sha256');
@@ -38,7 +39,7 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    var relative = slash(file.relative);
+    var relative = slash(path.relative(dest, file.path));
 
     if (exclude.indexOf(relative) >= 0) {
       return;
