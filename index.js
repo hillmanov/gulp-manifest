@@ -82,7 +82,7 @@ function manifest(options) {
     // output hash to cache manifest
     if (options.hash) {
       contents.push('');
-      contents.push('# hash: ' + hasher.digest("hex"));
+      contents.push('# Hash: ' + hasher.digest("hex"));
     }
 
     var cwd = process.cwd();
