@@ -19,14 +19,16 @@ function manifest(options) {
   var hasher = crypto.createHash('sha256');
 
   if (options.timestamp) {
+    contents.push('');
     contents.push('# Time: ' + new Date());
   }
 
   if (options.revision) {
+    contents.push('');
     contents.push('# Revision: ' + options.revision);
   }
 
-  contents.push(lineBreak);
+  contents.push('');
   contents.push('CACHE:');
 
   if (options.cache) {
@@ -55,7 +57,7 @@ function manifest(options) {
   function endStream() {
     // Network section
     options.network = options.network || ['*'];
-    contents.push(lineBreak);
+    contents.push('');
     contents.push('NETWORK:');
     options.network.forEach(function (file) {
       contents.push(encodeURI(file));
@@ -63,7 +65,7 @@ function manifest(options) {
 
     // Fallback section
     if (options.fallback) {
-      contents.push(lineBreak);
+      contents.push('');
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
         contents.push(encodeURI(file));
@@ -72,14 +74,15 @@ function manifest(options) {
 
     // Settings section
     if (options.preferOnline) {
-      contents.push(lineBreak);
+      contents.push('');
       contents.push('SETTINGS:');
       contents.push('prefer-online');
     }
 
     // output hash to cache manifest
     if (options.hash) {
-      contents.push('\n# hash: ' + hasher.digest("hex"));
+      contents.push('');
+      contents.push('# hash: ' + hasher.digest("hex"));
     }
 
     var cwd = process.cwd();
