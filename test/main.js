@@ -102,4 +102,22 @@ describe('gulp-manifest', function() {
     generateWithHash();
     generateWithHash();
   });
+
+  it('Should generate a valid fallback section', function(done) {
+    var stream = manifestPlugin({
+      filename: 'cache.manifest',
+      fallback: ['/ /offline.html'],
+      network: ['http://*', 'https://*', '*']
+    });
+
+    stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+      data.relative.should.eql('cache.manifest');
+
+      var contents = data.contents.toString();
+      contents.should.contain('FALLBACK:\n/ /offline.html');
+    });
+    stream.once('end', done);
+    stream.end();
+  });
 });

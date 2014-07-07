@@ -63,7 +63,15 @@ function manifest(options) {
       contents.push(lineBreak);
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
-        contents.push(encodeURI(file));
+        var firstSpace = file.indexOf(' ');
+        if(firstSpace === -1) {
+          return gutil.log('Invalid format for FALLBACK entry', file);
+        }
+        contents.push(
+          encodeURI(file.substring(0, firstSpace)) +
+          ' ' +
+          encodeURI(file.substring(firstSpace + 1))
+        );
       });
     }
 
@@ -84,7 +92,7 @@ function manifest(options) {
       cwd: cwd,
       base: cwd,
       path: path.join(cwd, filename),
-      contents: new Buffer(contents.join(lineBreak)),
+      contents: new Buffer(contents.join(lineBreak))
     });
 
     this.emit('data', manifestFile);
