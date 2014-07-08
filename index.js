@@ -13,19 +13,22 @@ function manifest(options) {
   var contents = [];
   contents.push('CACHE MANIFEST');
 
+  var dest = options.dest || '.';
   var filename = options.filename || 'app.manifest';
   var exclude = [].concat(options.exclude || []);
   var hasher = crypto.createHash('sha256');
 
   if (options.timestamp) {
+    contents.push('');
     contents.push('# Time: ' + new Date());
   }
 
   if (options.revision) {
+    contents.push('');
     contents.push('# Revision: ' + options.revision);
   }
 
-  contents.push(lineBreak);
+  contents.push('');
   contents.push('CACHE:');
 
   if (options.cache) {
@@ -38,11 +41,13 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (exclude.indexOf(file.relative) >= 0) {
+    var relative = slash(path.relative(dest, file.path));
+
+    if (exclude.indexOf(relative) >= 0) {
       return;
     }
 
-    contents.push(encodeURI(slash(file.relative)));
+    contents.push(encodeURI(relative));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
@@ -52,7 +57,7 @@ function manifest(options) {
   function endStream() {
     // Network section
     options.network = options.network || ['*'];
-    contents.push(lineBreak);
+    contents.push('');
     contents.push('NETWORK:');
     options.network.forEach(function (file) {
       contents.push(encodeURI(file));
@@ -60,7 +65,7 @@ function manifest(options) {
 
     // Fallback section
     if (options.fallback) {
-      contents.push(lineBreak);
+      contents.push('');
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
         var firstSpace = file.indexOf(' ');
@@ -77,14 +82,15 @@ function manifest(options) {
 
     // Settings section
     if (options.preferOnline) {
-      contents.push(lineBreak);
+      contents.push('');
       contents.push('SETTINGS:');
       contents.push('prefer-online');
     }
 
     // output hash to cache manifest
     if (options.hash) {
-      contents.push('\n# hash: ' + hasher.digest("hex"));
+      contents.push('');
+      contents.push('# Hash: ' + hasher.digest("hex"));
     }
 
     var cwd = process.cwd();
