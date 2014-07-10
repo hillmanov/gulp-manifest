@@ -28,12 +28,6 @@ function manifest(options) {
   contents.push(lineBreak);
   contents.push('CACHE:');
 
-  if (options.cache) {
-    options.cache.forEach(function (file) {
-      contents.push(encodeURI(file));
-    });
-  }
-
   function writeToManifest(file) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
@@ -42,7 +36,7 @@ function manifest(options) {
       return;
     }
 
-    contents.push(encodeURI(slash(file.relative)));
+    contents.push(((options.relativePath|| '').replace(/([^\/])$/, "$1/") || '')+encodeURI(slash(file.relative)));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
