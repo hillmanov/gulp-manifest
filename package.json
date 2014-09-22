@@ -25,7 +25,6 @@
     "mocha": "~1.16.2"
   },
   "dependencies": {
-    "event-stream": "~3.0.20",
     "through": "~2.3.4",
     "gulp-util": "~2.2.6",
     "slash": "^0.1.1"

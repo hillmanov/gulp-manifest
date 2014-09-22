@@ -21,9 +21,17 @@ npm install gulp-manifest --save-dev
 
 This controls how this task (and its helpers) operate and should contain key:value pairs, see options below.
 
+#### options.baseUrl
+Type: `String`  
+Default: `undefined`  
+
+Set a base URL as a prefix to the file paths.
+
+This can be useful if your files are in a different URL than the page.
+
 #### options.filename
 Type: `String`  
-Default: `"app.manifest"`
+Default: `"app.manifest"`  
 
 Set name of the Cache Manifest file.
 
@@ -41,7 +49,7 @@ Exclude specific files from the Cache Manifest file.
 
 #### options.network
 Type: `String` `Array`  
-Default: `"*"` (By default, an online whitelist wildcard flag is added)   
+Default: `"*"` (By default, an online whitelist wildcard flag is added)  
 
 Adds a string to the **NETWORK** section.
 
@@ -56,24 +64,24 @@ Adds a string to the **FALLBACK** section.
 See [here](http://diveintohtml5.info/offline.html#fallback) for more information.
 
 #### options.preferOnline
-Type: `Boolean`   
-Default: `undefined`
+Type: `Boolean`  
+Default: `undefined`  
 
 Adds a string to the **SETTINGS** section, specifically the cache mode flag of the ```prefer-online``` state.
 
 See [here](http://www.whatwg.org/specs/web-apps/current-work/multipage/offline.html#concept-appcache-mode-prefer-online) for more information.
 
 #### options.timestamp
-Type: `Boolean`   
-Default: `true` 
+Type: `Boolean`  
+Default: `true`  
 
 Adds a timestamp as a comment for easy versioning.
 
 Note: timestamp will invalidate application cache whenever cache manifest is rebuilt, even if contents of files in `src` have not changed.
 
 #### options.hash
-Type: `Boolean`
-Default: `false`
+Type: `Boolean`  
+Default: `false`  
 
 Adds a sha256 hash of all `src` files (actual contents) as a comment.
 
@@ -85,6 +93,7 @@ This will ensure that application cache invalidates whenever actual file content
     gulp.task('manifest', function(){
       gulp.src(['build/*'])
         .pipe(manifest({
+          baseUrl: 'http://example.com/',
           hash: true,
           preferOnline: true,
           network: ['http://*', 'https://*', '*'],
@@ -100,13 +109,13 @@ This will ensure that application cache invalidates whenever actual file content
     CACHE MANIFEST
 
     CACHE:
-    js/app.js
-    css/style
-    css/style.css
-    js/zepto.min.js
-    js/script.js
-    some_files/index.html
-    some_files/about.html
+    http://example.com/js/app.js
+    http://example.com/css/style
+    http://example.com/css/style.css
+    http://example.com/js/zepto.min.js
+    http://example.com/js/script.js
+    http://example.com/some_files/index.html
+    http://example.com/some_files/about.html
 
     NETWORK:
     http://*

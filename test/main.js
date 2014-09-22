@@ -47,7 +47,7 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
-  it('should work with Windows OS file system', function(done) {
+  it('Should work with Windows OS file system', function(done) {
     var stream = manifestPlugin({
         hash: false
     });
@@ -118,6 +118,28 @@ describe('gulp-manifest', function() {
       contents.should.contain('FALLBACK:\n/ /offline.html');
     });
     stream.once('end', done);
+    stream.end();
+  });
+
+  it('Should add base url as a prefix', function(done) {
+    var baseUrl = 'http://example.com/',
+        stream = manifestPlugin({
+          baseUrl: baseUrl
+        });
+
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.contain(baseUrl);
+    });
+    stream.once('end', done);
+
+    stream.write(new gutil.File({
+      path: path.resolve('test\\fixture\\hello.js'),
+      cwd: path.resolve('test/'),
+      base: path.resolve('test/'),
+      contents: new Buffer('notimportant')
+    }));
+
     stream.end();
   });
 });

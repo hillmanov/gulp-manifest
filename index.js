@@ -1,7 +1,6 @@
 "use strict";
 
-var es        = require('event-stream'),
-    through   = require('through'),
+var through   = require('through'),
     gutil     = require('gulp-util'),
     crypto    = require('crypto'),
     path      = require('path'),
@@ -10,7 +9,9 @@ var es        = require('event-stream'),
 
 function manifest(options) {
   options = options || {};
+
   var contents = [];
+
   contents.push('CACHE MANIFEST');
 
   var filename = options.filename || 'app.manifest';
@@ -35,6 +36,8 @@ function manifest(options) {
   }
 
   function writeToManifest(file) {
+    var baseUrl;
+
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
@@ -42,7 +45,9 @@ function manifest(options) {
       return;
     }
 
-    contents.push(encodeURI(slash(file.relative)));
+    baseUrl = options.baseUrl || "";
+
+    contents.push(encodeURI(baseUrl + slash(file.relative)));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
