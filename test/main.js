@@ -121,15 +121,15 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
-  it('Should add base url as a prefix', function(done) {
-    var baseUrl = 'http://example.com/',
+  it('Should add a prefix', function(done) {
+    var prefix = 'http://example.com/',
         stream = manifestPlugin({
-          baseUrl: baseUrl
+          prefix: prefix
         });
 
     stream.on('data', function(data) {
       var contents = data.contents.toString();
-      contents.should.contain(baseUrl);
+      contents.should.contain(prefix);
     });
     stream.once('end', done);
 

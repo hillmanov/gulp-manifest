@@ -21,13 +21,11 @@ npm install gulp-manifest --save-dev
 
 This controls how this task (and its helpers) operate and should contain key:value pairs, see options below.
 
-#### options.baseUrl
+#### options.prefix
 Type: `String`  
 Default: `undefined`  
 
-Set a base URL as a prefix to the file paths.
-
-This can be useful if your files are in a different URL than the page.
+Add a prefix to the file paths. This can be useful if your files are in a different URL than the page.
 
 #### options.filename
 Type: `String`  
@@ -93,7 +91,6 @@ This will ensure that application cache invalidates whenever actual file content
     gulp.task('manifest', function(){
       gulp.src(['build/*'])
         .pipe(manifest({
-          baseUrl: 'http://example.com/',
           hash: true,
           preferOnline: true,
           network: ['http://*', 'https://*', '*'],
@@ -109,13 +106,13 @@ This will ensure that application cache invalidates whenever actual file content
     CACHE MANIFEST
 
     CACHE:
-    http://example.com/js/app.js
-    http://example.com/css/style
-    http://example.com/css/style.css
-    http://example.com/js/zepto.min.js
-    http://example.com/js/script.js
-    http://example.com/some_files/index.html
-    http://example.com/some_files/about.html
+    js/app.js
+    css/style
+    css/style.css
+    js/zepto.min.js
+    js/script.js
+    some_files/index.html
+    some_files/about.html
 
     NETWORK:
     http://*

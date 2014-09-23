@@ -36,7 +36,7 @@ function manifest(options) {
   }
 
   function writeToManifest(file) {
-    var baseUrl;
+    var prefix;
 
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
@@ -45,9 +45,9 @@ function manifest(options) {
       return;
     }
 
-    baseUrl = options.baseUrl || "";
+    prefix = options.prefix || '';
 
-    contents.push(encodeURI(baseUrl + slash(file.relative)));
+    contents.push(encodeURI(prefix + slash(file.relative)));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
