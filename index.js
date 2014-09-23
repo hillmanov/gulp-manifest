@@ -8,17 +8,17 @@ var through   = require('through'),
     lineBreak = '\n';
 
 function manifest(options) {
-  var cwd = process.cwd();
+  var filename, exclude, hasher, cwd, contents;
 
   options = options || {};
 
-  var contents = [];
+  filename = options.filename || 'app.manifest';
+  exclude = [].concat(options.exclude || []);
+  hasher = crypto.createHash('sha256');
+  cwd = process.cwd();
+  contents = [];
 
   contents.push('CACHE MANIFEST');
-
-  var filename = options.filename || 'app.manifest';
-  var exclude = [].concat(options.exclude || []);
-  var hasher = crypto.createHash('sha256');
 
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
@@ -73,9 +73,11 @@ function manifest(options) {
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
         var firstSpace = file.indexOf(' ');
-        if(firstSpace === -1) {
+
+        if (firstSpace === -1) {
           return gutil.log('Invalid format for FALLBACK entry', file);
         }
+
         contents.push(
           encodeURI(file.substring(0, firstSpace)) +
           ' ' +
