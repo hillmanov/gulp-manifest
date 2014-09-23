@@ -8,6 +8,8 @@ var through   = require('through'),
     lineBreak = '\n';
 
 function manifest(options) {
+  var cwd = process.cwd();
+
   options = options || {};
 
   var contents = [];
@@ -36,18 +38,20 @@ function manifest(options) {
   }
 
   function writeToManifest(file) {
-    var prefix;
+    var prefix, path;
 
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (exclude.indexOf(file.relative) >= 0) {
+    if (exclude.indexOf(file.path) >= 0) {
       return;
     }
 
     prefix = options.prefix || '';
 
-    contents.push(encodeURI(prefix + slash(file.relative)));
+    path = prefix + slash(file.path).replace(new RegExp('^' + cwd + '/'), '').replace(new RegExp('^' + options.basePath), '');
+
+    contents.push(encodeURI(path));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
@@ -92,7 +96,6 @@ function manifest(options) {
       contents.push('\n# hash: ' + hasher.digest("hex"));
     }
 
-    var cwd = process.cwd();
     var manifestFile = new gutil.File({
       cwd: cwd,
       base: cwd,
