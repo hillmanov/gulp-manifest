@@ -16,6 +16,7 @@ function manifest(options) {
   var filename = options.filename || 'app.manifest';
   var exclude = [].concat(options.exclude || []);
   var hasher = crypto.createHash('sha256');
+  var isWin = /^win/.test(process.platform);
 
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
@@ -38,8 +39,14 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (exclude.indexOf(file.relative) >= 0) {
-      return;
+    if (isWin) {
+      if (exclude.indexOf(file.relative.replace(/\\/g, '/')) !== -1) {
+        return;
+      }
+    } else {
+      if (exclude.indexOf(file.relative) !== -1) {
+        return;
+      }
     }
 
     contents.push(encodeURI(slash(file.relative)));
