@@ -38,9 +38,12 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (exclude.indexOf(file.relative) >= 0) {
-      return;
-    }
+    for (var i = 0; i < exclude.length; i++) {
+          if(minimatch(file.relative, exclude[i])){
+              //console.log(exclude[i] + ":" + file.relative);  //print the path of excluded file
+              return;
+          }
+      }
 
     contents.push(encodeURI(slash(file.relative)));
 
