@@ -6,6 +6,7 @@ var es        = require('event-stream'),
     crypto    = require('crypto'),
     path      = require('path'),
     slash     = require('slash'),
+    minimatch     = require('minimatch'),
     lineBreak = '\n';
 
 function manifest(options) {
