@@ -6,6 +6,7 @@ var es        = require('event-stream'),
     crypto    = require('crypto'),
     path      = require('path'),
     slash     = require('slash'),
+    minimatch     = require('minimatch'),
     lineBreak = '\n';
 
 function manifest(options) {
@@ -38,9 +39,11 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (exclude.indexOf(file.relative) >= 0) {
-      return;
-    }
+    for (var i = 0; i < exclude.length; i++) {
+          if(minimatch(file.relative, exclude[i])){
+              return;
+          }
+      }
 
     contents.push(encodeURI(slash(file.relative)));
 

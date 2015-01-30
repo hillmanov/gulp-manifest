@@ -16,7 +16,12 @@ function createFakeFile(filename) {
 }
 
 describe('gulp-manifest', function() {
-  var fileNames = ['file1.js', 'file2.js', 'file3.js', 'file4.js'];
+  var fileNames = ['file1.js', 'file2.js', 'file3.js', 'file4.js',
+      'exclude/exclude1.js','exclude/exclude2.js',
+      'exclude/children1/exclude3.js',
+      'children2/include1.js','children2/exclude4.js',
+      'children2/children3/include2.js','children2/children3/exclude5.js'
+  ];
   var fakeFiles = fileNames.map(createFakeFile);
 
   it('Should generate a manifest file', function(done) {
@@ -118,6 +123,38 @@ describe('gulp-manifest', function() {
       contents.should.contain('FALLBACK:\n/ /offline.html');
     });
     stream.once('end', done);
+    stream.end();
+  });
+  
+  it('Should exclude special files', function(done) {
+    var stream = manifestPlugin({
+      filename: 'cache.manifest',
+      exclude:  ['file2.js','exclude/**',"children2/**/exclude*.js"],
+      hash: true,
+      network: ['http://*', 'https://*', '*'],
+      preferOnline: true
+    });
+
+    stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+      data.relative.should.eql('cache.manifest');
+
+      var contents = data.contents.toString();
+      contents.should.startWith('CACHE MANIFEST');
+      contents.should.contain('CACHE:');
+      contents.should.contain('file1.js');
+      contents.should.not.contain('file2.js');
+      contents.should.contain('file3.js');
+      contents.should.contain('file4.js');
+      contents.should.contain('# hash: ');
+
+      contents.should.not.contain('exclude');
+      contents.should.contain('include1.js');
+      contents.should.contain('include2.js');
+    });
+    stream.once('end', done);
+
+    fakeFiles.forEach(stream.write.bind(stream));
     stream.end();
   });
 });
