@@ -41,7 +41,6 @@ function manifest(options) {
 
     for (var i = 0; i < exclude.length; i++) {
           if(minimatch(file.relative, exclude[i])){
-              //console.log(exclude[i] + ":" + file.relative);  //print the path of excluded file
               return;
           }
       }
