@@ -15,6 +15,7 @@ function manifest(options) {
   contents.push('CACHE MANIFEST');
 
   var filename = options.filename || 'app.manifest';
+  var prefix = options.prefix || '';
   var exclude = [].concat(options.exclude || []);
   var hasher = crypto.createHash('sha256');
 
@@ -45,7 +46,7 @@ function manifest(options) {
           }
       }
 
-    contents.push(encodeURI(slash(file.relative)));
+    contents.push(encodeURI(prefix + slash(file.relative)));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');

@@ -79,6 +79,15 @@ Adds a sha256 hash of all `src` files (actual contents) as a comment.
 
 This will ensure that application cache invalidates whenever actual file contents change (it's recommented to set `timestamp` to `false` when `hash` is used).
 
+#### options.prefix
+Type: `String`
+Default: `''`
+
+Adds a prefix to all files listed under `Cache:` in the manifest file.
+
+This is a neat trick if you want to expose the files under a different URI than they reside on the file system.
+
+
 ### Usage Example
 
 
