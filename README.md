@@ -87,7 +87,7 @@ This will ensure that application cache invalidates whenever actual file content
         .pipe(manifest({
           hash: true,
           preferOnline: true,
-          network: ['http://*', 'https://*', '*'],
+          network: ['*'],
           filename: 'app.manifest',
           exclude: 'app.manifest'
          }))
@@ -109,8 +109,6 @@ This will ensure that application cache invalidates whenever actual file content
     some_files/about.html
 
     NETWORK:
-    http://*
-    https://*
     *
 
     # hash: 76f0ef591f999871e1dbdf6d5064d1276d80846feeef6b556f74ad87b44ca16a
