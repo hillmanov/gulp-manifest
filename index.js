@@ -5,6 +5,7 @@ var through   = require('through'),
     crypto    = require('crypto'),
     path      = require('path'),
     slash     = require('slash'),
+    minimatch = require('minimatch'),
     lineBreak = '\n';
 
 function manifest(options) {
@@ -13,7 +14,7 @@ function manifest(options) {
   options = options || {};
 
   filename = options.filename || 'app.manifest';
-  exclude = [].concat(options.exclude || []);
+  exclude = Array.prototype.concat(options.exclude || []);
   hasher = crypto.createHash('sha256');
   cwd = process.cwd();
   contents = [];
@@ -43,8 +44,10 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    if (exclude.indexOf(file.relative) >= 0) {
-      return;
+    for (var i = 0; i < exclude.length; i++) {
+      if(minimatch(file.relative, exclude[i])){
+        return;
+      }
     }
 
     prefix = options.prefix || '';
