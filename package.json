@@ -21,7 +21,6 @@
   },
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "58e17b7e8757385a1988e30735c46c86e78a2aba",
   "devDependencies": {
     "event-stream": "^3.1.7",
     "mocha": "~1.16.2",
