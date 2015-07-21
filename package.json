@@ -36,9 +36,5 @@
   "bugs": {
     "url": "https://github.com/hillmanov/gulp-manifest/issues"
   },
-  "homepage": "https://github.com/hillmanov/gulp-manifest",
-  "_id": "gulp-manifest@0.0.5",
-  "_shasum": "cd9be5772ed287c1e3a607d9160344897d1c8d8b",
-  "_resolved": "git://github.com/satya164/gulp-manifest.git#b237d7c83ec28c8f95c3d960dd2689a614fa58f9",
-  "_from": "gulp-manifest@git://github.com/satya164/gulp-manifest.git"
+  "homepage": "https://github.com/hillmanov/gulp-manifest"
 }
