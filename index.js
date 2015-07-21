@@ -66,6 +66,9 @@ function manifest(options) {
     if (options.fallback) {
       contents.push(lineBreak);
       contents.push('FALLBACK:');
+      if (typeof options.fallback === 'string') {
+        options.fallback = [options.fallback];
+      }
       options.fallback.forEach(function (file) {
         var firstSpace = file.indexOf(' ');
         if(firstSpace === -1) {
