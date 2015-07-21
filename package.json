@@ -14,7 +14,8 @@
     "gulp",
     "gulpplugin",
     "html5",
-    "manifest"
+    "manifest",
+    "appcache"
   ],
   "author": {
     "name": "Scott Hillman"
