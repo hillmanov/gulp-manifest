@@ -1,0 +1,109 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/scott/.nvm/v0.10.38/bin/node',
+1 verbose cli   '/Users/scott/.nvm/v0.10.38/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.38
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /Users/scott/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/Users/scott/.npm/gulp-manifest/0.0.6/package.tgz', '.' ]
+11 verbose tarball /Users/scott/.npm/gulp-manifest/0.0.6/package.tgz
+12 verbose folder .
+13 info prepublish gulp-manifest@0.0.6
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. /Users/scott/.npm/1f1177db-tar.lock
+16 silly lockFile df54a836--gulp-manifest-0-0-6-package-tgz tar:///Users/scott/.npm/gulp-manifest/0.0.6/package.tgz
+17 verbose lock tar:///Users/scott/.npm/gulp-manifest/0.0.6/package.tgz /Users/scott/.npm/df54a836--gulp-manifest-0-0-6-package-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile df54a836--gulp-manifest-0-0-6-package-tgz tar:///Users/scott/.npm/gulp-manifest/0.0.6/package.tgz
+21 silly lockFile df54a836--gulp-manifest-0-0-6-package-tgz tar:///Users/scott/.npm/gulp-manifest/0.0.6/package.tgz
+22 silly lockFile c79587f9--npm-gulp-manifest-0-0-6-package /Users/scott/.npm/gulp-manifest/0.0.6/package
+23 verbose lock /Users/scott/.npm/gulp-manifest/0.0.6/package /Users/scott/.npm/c79587f9--npm-gulp-manifest-0-0-6-package.lock
+24 silly lockFile c79587f9--npm-gulp-manifest-0-0-6-package /Users/scott/.npm/gulp-manifest/0.0.6/package
+25 silly lockFile c79587f9--npm-gulp-manifest-0-0-6-package /Users/scott/.npm/gulp-manifest/0.0.6/package
+26 silly lockFile 3a52ce78- .
+27 silly lockFile 3a52ce78- .
+28 silly publish { name: 'gulp-manifest',
+28 silly publish   version: '0.0.6',
+28 silly publish   description: 'Generate HTML5 Cache Manifest files',
+28 silly publish   main: 'index.js',
+28 silly publish   scripts: { test: 'mocha' },
+28 silly publish   repository:
+28 silly publish    { type: 'git',
+28 silly publish      url: 'https://github.com/hillmanov/gulp-manifest' },
+28 silly publish   keywords: [ 'gulp', 'gulpplugin', 'html5', 'manifest' ],
+28 silly publish   author: { name: 'Scott Hillman' },
+28 silly publish   license: 'MIT',
+28 silly publish   readmeFilename: 'README.md',
+28 silly publish   gitHead: '58e17b7e8757385a1988e30735c46c86e78a2aba',
+28 silly publish   devDependencies: { should: '~2.1.1', mocha: '~1.16.2' },
+28 silly publish   dependencies:
+28 silly publish    { 'event-stream': '~3.0.20',
+28 silly publish      through: '~2.3.4',
+28 silly publish      'gulp-util': '~2.2.6',
+28 silly publish      slash: '^0.1.1',
+28 silly publish      minimatch: '~2.0.1' },
+28 silly publish   readme: '# gulp-manifest \n> Generate HTML5 Cache Manifest files. Submitted by [Scott Hillman](https://github.com/hillmanov/).\n\nBig thanks to [Gunther Brunner](https://github.com/gunta/) for writing the [grunt-manifest](https://github.com/gunta/grunt-manifest) plugin. This plugin was heavily influenced by his great work. \n\nVisit the [HTML 5 Guide to AppCache](http://www.html5rocks.com/en/tutorials/appcache/beginner/) for more information on Cache Manifest files.\n\n## Usage\n\nFirst, install `gulp-manifest` as a dev dependency\n\n```shell\nnpm install gulp-manifest --save-dev\n```\n\n## API\n\n### Parameters\n\n### manifest(options)\n\nThis controls how this task (and its helpers) operate and should contain key:value pairs, see options below.\n\n#### options.filename\nType: `String`  \nDefault: `"app.manifest"`\n\nSet name of the Cache Manifest file.\n\n#### options.cache\nType: `String`  \nDefault: `undefined`  \n\nAdds manually a string to the **CACHE** section. Needed when you have cache buster for example.\n\n#### options.exclude\nType: `String` `Array`  \nDefault: `undefined`  \n\nExclude specific files from the Cache Manifest file.\n\n#### options.network\nType: `String` `Array`  \nDefault: `"*"` (By default, an online whitelist wildcard flag is added)   \n\nAdds a string to the **NETWORK** section.\n\nSee [here](http://diveintohtml5.info/offline.html#network) for more information.\n\n#### options.fallback\nType: `String` `Array`  \nDefault: `undefined`  \n\nAdds a string to the **FALLBACK** section.\n\nSee [here](http://diveintohtml5.info/offline.html#fallback) for more information.\n\n#### options.preferOnline\nType: `Boolean`   \nDefault: `undefined`\n\nAdds a string to the **SETTINGS** section, specifically the cache mode flag of the ```prefer-online``` state.\n\nSee [here](http://www.whatwg.org/specs/web-apps/current-work/multipage/offline.html#concept-appcache-mode-prefer-online) for more information.\n\n#### options.timestamp\nType: `Boolean`   \nDefault: `true` \n\nAdds a timestamp as a comment for easy versioning.\n\nNote: timestamp will invalidate application cache whenever cache manifest is rebuilt, even if contents of files in `src` have not changed.\n\n#### options.hash\nType: `Boolean`\nDefault: `false`\n\nAdds a sha256 hash of all `src` files (actual contents) as a comment.\n\nThis will ensure that application cache invalidates whenever actual file contents change (it\'s recommented to set `timestamp` to `false` when `hash` is used).\n\n### Usage Example\n\n\n    gulp.task(\'manifest\', function(){\n      gulp.src([\'build/*\'])\n        .pipe(manifest({\n          hash: true,\n          preferOnline: true,\n          network: [\'*\'],\n          filename: \'app.manifest\',\n          exclude: \'app.manifest\'\n         }))\n        .pipe(gulp.dest(\'build\'));\n    });\n\n\n### Output example\n\n    CACHE MANIFEST\n\n    CACHE:\n    js/app.js\n    css/style\n    css/style.css\n    js/zepto.min.js\n    js/script.js\n    some_files/index.html\n    some_files/about.html\n\n    NETWORK:\n    *\n\n    # hash: 76f0ef591f999871e1dbdf6d5064d1276d80846feeef6b556f74ad87b44ca16a\n\n\nYou do need to be fully aware of standard browser caching.\nIf the files in **CACHE** are in the network cache, they won\'t actually update,\nsince the network cache will spit back the same file to the application cache.\nTherefore, it\'s recommended to add a hash to the filenames\'s, akin to rails or yeoman. See [here](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/) why query strings are not recommended.\n',
+28 silly publish   bugs: { url: 'https://github.com/hillmanov/gulp-manifest/issues' },
+28 silly publish   homepage: 'https://github.com/hillmanov/gulp-manifest',
+28 silly publish   _id: 'gulp-manifest@0.0.6',
+28 silly publish   _shasum: '7e8d4b45777028f54f3578e1838a86c7618ccdf1',
+28 silly publish   _from: '.' }
+29 verbose request where is /gulp-manifest
+30 verbose request registry https://registry.npmjs.org/
+31 verbose request id fdaf591492ea60a2
+32 verbose url raw /gulp-manifest
+33 verbose url resolving [ 'https://registry.npmjs.org/', './gulp-manifest' ]
+34 verbose url resolved https://registry.npmjs.org/gulp-manifest
+35 verbose request where is https://registry.npmjs.org/gulp-manifest
+36 info trying registry request attempt 1 at 08:07:23
+37 http PUT https://registry.npmjs.org/gulp-manifest
+38 http 403 https://registry.npmjs.org/gulp-manifest
+39 verbose headers { 'content-type': 'application/json',
+39 verbose headers   'cache-control': 'max-age=60',
+39 verbose headers   'content-length': '95',
+39 verbose headers   'accept-ranges': 'bytes',
+39 verbose headers   date: 'Tue, 21 Jul 2015 14:07:24 GMT',
+39 verbose headers   via: '1.1 varnish',
+39 verbose headers   connection: 'keep-alive',
+39 verbose headers   'x-served-by': 'cache-sjc3125-SJC',
+39 verbose headers   'x-cache': 'MISS',
+39 verbose headers   'x-cache-hits': '0',
+39 verbose headers   'x-timer': 'S1437487644.149640,VS0,VE162' }
+40 error publish Failed PUT 403
+41 error Error: "You cannot publish over the previously published version 0.0.6." : gulp-manifest
+41 error     at RegClient.<anonymous> (/Users/scott/.nvm/v0.10.38/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:308:14)
+41 error     at Request._callback (/Users/scott/.nvm/v0.10.38/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:246:65)
+41 error     at Request.self.callback (/Users/scott/.nvm/v0.10.38/lib/node_modules/npm/node_modules/request/request.js:236:22)
+41 error     at Request.emit (events.js:98:17)
+41 error     at Request.<anonymous> (/Users/scott/.nvm/v0.10.38/lib/node_modules/npm/node_modules/request/request.js:1142:14)
+41 error     at Request.emit (events.js:117:20)
+41 error     at IncomingMessage.<anonymous> (/Users/scott/.nvm/v0.10.38/lib/node_modules/npm/node_modules/request/request.js:1096:12)
+41 error     at IncomingMessage.emit (events.js:117:20)
+41 error     at _stream_readable.js:944:16
+41 error     at process._tickCallback (node.js:448:13)
+42 error If you need help, you may report this *entire* log,
+42 error including the npm and node versions, at:
+42 error     <http://github.com/npm/npm/issues>
+43 error System Darwin 14.4.0
+44 error command "/Users/scott/.nvm/v0.10.38/bin/node" "/Users/scott/.nvm/v0.10.38/bin/npm" "publish"
+45 error cwd /Users/scott/projects/node/gulp-manifest
+46 error node -v v0.10.38
+47 error npm -v 1.4.28
+48 verbose exit [ 1, true ]
