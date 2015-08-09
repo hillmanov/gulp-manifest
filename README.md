@@ -21,9 +21,21 @@ npm install gulp-manifest --save-dev
 
 This controls how this task (and its helpers) operate and should contain key:value pairs, see options below.
 
+#### options.prefix
+Type: `String`  
+Default: `undefined`  
+
+Add a prefix to the file paths. Useful when your files are in a different URL than the page.
+
+#### options.basePath
+Type: `String`  
+Default: `undefined`  
+
+Set a basepath for the files. Useful when the files are not served from the toplevel directory.
+
 #### options.filename
 Type: `String`  
-Default: `"app.manifest"`
+Default: `"app.manifest"`  
 
 Set name of the Cache Manifest file.
 
@@ -41,7 +53,7 @@ Exclude specific files from the Cache Manifest file.
 
 #### options.network
 Type: `String` `Array`  
-Default: `"*"` (By default, an online whitelist wildcard flag is added)   
+Default: `"*"` (By default, an online whitelist wildcard flag is added)  
 
 Adds a string to the **NETWORK** section.
 
@@ -56,24 +68,24 @@ Adds a string to the **FALLBACK** section.
 See [here](http://diveintohtml5.info/offline.html#fallback) for more information.
 
 #### options.preferOnline
-Type: `Boolean`   
-Default: `undefined`
+Type: `Boolean`  
+Default: `undefined`  
 
 Adds a string to the **SETTINGS** section, specifically the cache mode flag of the ```prefer-online``` state.
 
 See [here](http://www.whatwg.org/specs/web-apps/current-work/multipage/offline.html#concept-appcache-mode-prefer-online) for more information.
 
 #### options.timestamp
-Type: `Boolean`   
-Default: `true` 
+Type: `Boolean`  
+Default: `true`  
 
 Adds a timestamp as a comment for easy versioning.
 
 Note: timestamp will invalidate application cache whenever cache manifest is rebuilt, even if contents of files in `src` have not changed.
 
 #### options.hash
-Type: `Boolean`
-Default: `false`
+Type: `Boolean`  
+Default: `false`  
 
 Adds a sha256 hash of all `src` files (actual contents) as a comment.
 

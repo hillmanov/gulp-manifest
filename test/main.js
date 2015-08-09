@@ -1,6 +1,7 @@
 var fs             = require('fs'),
     path           = require('path'),
     es             = require('event-stream'),
+    slash          = require('slash'),
     should         = require('should'),
     gutil          = require('gulp-util'),
     mocha          = require('mocha'),
@@ -52,7 +53,7 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
-  it('should work with Windows OS file system', function(done) {
+  it('Should work with Windows OS file system', function(done) {
     var stream = manifestPlugin({
         hash: false
     });
@@ -125,7 +126,73 @@ describe('gulp-manifest', function() {
     stream.once('end', done);
     stream.end();
   });
-  
+
+  it('Should add a prefix', function(done) {
+    var prefix = 'http://example.com/',
+        stream = manifestPlugin({
+          prefix: prefix
+        });
+
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.contain(prefix);
+    });
+    stream.once('end', done);
+
+    stream.write(new gutil.File({
+      path: path.resolve('test\\fixture\\hello.js'),
+      cwd: path.resolve('test/'),
+      base: path.resolve('test/'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
+  it('Should add correct path', function(done) {
+    var filepath = 'test\\fixture\\hello.js',
+        stream = manifestPlugin();
+
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.contain(slash(filepath));
+    });
+
+    stream.once('end', done);
+
+    stream.write(new gutil.File({
+      path: path.resolve(filepath),
+      cwd: path.resolve('test/'),
+      base: path.resolve('test/'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
+  it('Should remove the base path', function(done) {
+    var basePath = 'basedir',
+        stream = manifestPlugin({
+          basePath: basePath
+        });
+
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.not.contain(basePath);
+    });
+
+    stream.once('end', done);
+
+    stream.write(new gutil.File({
+      path: path.resolve(basePath + '\\test\\fixture\\hello.js'),
+      cwd: path.resolve('test/'),
+      base: path.resolve('test/'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
   it('Should exclude special files', function(done) {
     var stream = manifestPlugin({
       filename: 'cache.manifest',
@@ -152,9 +219,11 @@ describe('gulp-manifest', function() {
       contents.should.contain('include1.js');
       contents.should.contain('include2.js');
     });
+
     stream.once('end', done);
 
     fakeFiles.forEach(stream.write.bind(stream));
+
     stream.end();
   });
 });

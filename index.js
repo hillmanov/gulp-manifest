@@ -1,23 +1,25 @@
 "use strict";
 
-var es        = require('event-stream'),
-    through   = require('through'),
+var through   = require('through'),
     gutil     = require('gulp-util'),
     crypto    = require('crypto'),
     path      = require('path'),
     slash     = require('slash'),
-    minimatch     = require('minimatch'),
+    minimatch = require('minimatch'),
     lineBreak = '\n';
 
 function manifest(options) {
-  options = options || {};
-  var contents = [];
-  contents.push('CACHE MANIFEST');
+  var filename, exclude, hasher, cwd, contents;
 
-  var filename = options.filename || 'app.manifest';
-  var exclude = [].concat(options.exclude || []);
-  var hasher = crypto.createHash('sha256');
-  var prefixCache = options.prefixCache || '';
+  options = options || {};
+
+  filename = options.filename || 'app.manifest';
+  exclude = Array.prototype.concat(options.exclude || []);
+  hasher = crypto.createHash('sha256');
+  cwd = process.cwd();
+  contents = [];
+
+  contents.push('CACHE MANIFEST');
 
   if (options.timestamp) {
     contents.push('# Time: ' + new Date());
@@ -37,16 +39,22 @@ function manifest(options) {
   }
 
   function writeToManifest(file) {
+    var prefix, path;
+
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
     for (var i = 0; i < exclude.length; i++) {
-          if(minimatch(file.relative, exclude[i])){
-              return;
-          }
+      if(minimatch(file.relative, exclude[i])){
+        return;
       }
+    }
 
-    contents.push(encodeURI(slash(prefixCache + file.relative)));
+    prefix = options.prefix || '';
+
+    path = prefix + slash(file.path).replace(new RegExp('^' + cwd + '/'), '').replace(new RegExp('^' + options.basePath), '');
+
+    contents.push(encodeURI(path));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
@@ -68,9 +76,11 @@ function manifest(options) {
       contents.push('FALLBACK:');
       options.fallback.forEach(function (file) {
         var firstSpace = file.indexOf(' ');
-        if(firstSpace === -1) {
+
+        if (firstSpace === -1) {
           return gutil.log('Invalid format for FALLBACK entry', file);
         }
+
         contents.push(
           encodeURI(file.substring(0, firstSpace)) +
           ' ' +
@@ -91,7 +101,6 @@ function manifest(options) {
       contents.push('\n# hash: ' + hasher.digest("hex"));
     }
 
-    var cwd = process.cwd();
     var manifestFile = new gutil.File({
       cwd: cwd,
       base: cwd,
