@@ -4,7 +4,6 @@ var through   = require('through'),
     gutil     = require('gulp-util'),
     crypto    = require('crypto'),
     path      = require('path'),
-    slash     = require('slash'),
     minimatch = require('minimatch'),
     lineBreak = '\n';
 
@@ -39,7 +38,7 @@ function manifest(options) {
   }
 
   function writeToManifest(file) {
-    var prefix, path;
+    var prefix, filepath;
 
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
@@ -51,10 +50,9 @@ function manifest(options) {
     }
 
     prefix = options.prefix || '';
+    filepath = prefix + file.relative;
 
-    path = prefix + slash(file.path).replace(new RegExp('^' + cwd + '/'), '').replace(new RegExp('^' + options.basePath), '');
-
-    contents.push(encodeURI(path));
+    contents.push(encodeURI(file.relative));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
