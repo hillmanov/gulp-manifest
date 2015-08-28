@@ -149,6 +149,28 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
+  it('Should add a suffix', function(done) {
+    var suffix = '?query',
+        stream = manifestPlugin({
+          suffix: suffix
+        });
+
+    stream.on('data', function(data) {
+      var contents = data.contents.toString();
+      contents.should.contain(suffix);
+    });
+    stream.once('end', done);
+
+    stream.write(new gutil.File({
+      path: path.resolve('test\\fixture\\hello.js'),
+      cwd: path.resolve('test/'),
+      base: path.resolve('test/'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
   it('Should add correct path', function(done) {
     var filepath = 'test\\fixture\\hello.js',
         stream = manifestPlugin();

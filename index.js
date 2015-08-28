@@ -37,22 +37,25 @@ function manifest(options) {
     });
   }
 
+  function shouldExcludeFile(file) {
+    return exclude.some(function (exclusion) {
+      return minimatch(file.relative, exclusion);
+    });
+  }
+
   function writeToManifest(file) {
-    var prefix, filepath;
+    var filepath;
 
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
-    for (var i = 0; i < exclude.length; i++) {
-      if(minimatch(file.relative, exclude[i])){
-        return;
-      }
+    if (shouldExcludeFile(file)) {
+      return;
     }
 
-    prefix = options.prefix || '';
-    filepath = prefix + file.relative;
+    filepath = [options.prefix || '', file.relative, options.suffix || ''].join('');
 
-    contents.push(encodeURI(file.relative));
+    contents.push(encodeURI(filepath));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
