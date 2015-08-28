@@ -30,7 +30,6 @@
   "dependencies": {
     "through": "~2.3.4",
     "gulp-util": "~2.2.6",
-    "slash": "^0.1.1",
     "minimatch": "~2.0.1"
   },
   "bugs": {
