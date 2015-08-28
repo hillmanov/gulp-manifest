@@ -1,6 +1,6 @@
 {
   "name": "gulp-manifest",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Generate HTML5 Cache Manifest files",
   "main": "index.js",
   "scripts": {
