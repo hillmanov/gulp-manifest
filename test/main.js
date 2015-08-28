@@ -177,36 +177,13 @@ describe('gulp-manifest', function() {
 
     stream.on('data', function(data) {
       var contents = data.contents.toString();
-      contents.should.contain(slash(filepath));
+      contents.should.contain(slash('fixture\\hello.js'));
     });
 
     stream.once('end', done);
 
     stream.write(new gutil.File({
       path: path.resolve(filepath),
-      cwd: path.resolve('test/'),
-      base: path.resolve('test/'),
-      contents: new Buffer('notimportant')
-    }));
-
-    stream.end();
-  });
-
-  it('Should remove the base path', function(done) {
-    var basePath = 'basedir',
-        stream = manifestPlugin({
-          basePath: basePath
-        });
-
-    stream.on('data', function(data) {
-      var contents = data.contents.toString();
-      contents.should.not.contain(basePath);
-    });
-
-    stream.once('end', done);
-
-    stream.write(new gutil.File({
-      path: path.resolve(basePath + '\\test\\fixture\\hello.js'),
       cwd: path.resolve('test/'),
       base: path.resolve('test/'),
       contents: new Buffer('notimportant')

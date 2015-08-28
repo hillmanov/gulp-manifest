@@ -1,11 +1,12 @@
 "use strict";
 
-var through   = require('through'),
-    gutil     = require('gulp-util'),
-    crypto    = require('crypto'),
-    path      = require('path'),
-    minimatch = require('minimatch'),
-    lineBreak = '\n';
+var through = require('through'),
+  gutil = require('gulp-util'),
+  crypto = require('crypto'),
+  path = require('path'),
+  minimatch = require('minimatch'),
+  lineBreak = '\n',
+  isWin = /^win/.test(process.platform);
 
 function manifest(options) {
   var filename, exclude, hasher, cwd, contents;
@@ -37,21 +38,26 @@ function manifest(options) {
     });
   }
 
-  function shouldExcludeFile(file) {
-    return exclude.some(minimatch.bind(null, file.relative));
+  function getRelativeFilePath(file) {
+    return isWin ? file.relative.replace(/\\/g, '/') : file.relative;
+  }
+
+  function shouldExcludeFile(filePath) {
+    return exclude.some(minimatch.bind(null, filePath));
   }
 
   function writeToManifest(file) {
-    var filepath;
+    var filepath,
+      relativeFilePath = getRelativeFilePath(file);
 
     if (file.isNull())   return;
-    if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
+    if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest', 'Streaming not supported'));
 
-    if (shouldExcludeFile(file)) {
+    if (shouldExcludeFile(relativeFilePath)) {
       return;
     }
 
-    filepath = [options.prefix || '', file.relative, options.suffix || ''].join('');
+    filepath = [options.prefix || '', relativeFilePath, options.suffix || ''].join('');
 
     contents.push(encodeURI(filepath));
 
