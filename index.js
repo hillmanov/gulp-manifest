@@ -38,9 +38,7 @@ function manifest(options) {
   }
 
   function shouldExcludeFile(file) {
-    return exclude.some(function (exclusion) {
-      return minimatch(file.relative, exclusion);
-    });
+    return exclude.some(minimatch.bind(null, file.relative));
   }
 
   function writeToManifest(file) {
