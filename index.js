@@ -52,7 +52,7 @@ function manifest(options) {
     prefix = options.prefix || '';
     filepath = prefix + file.relative;
 
-    contents.push(encodeURI(file.relative));
+    contents.push(encodeURI(filepath));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
