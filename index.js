@@ -13,6 +13,10 @@ function manifest(options) {
 
   options = options || {};
 
+  if(options.basePath) {
+    gutil.log('basePath option is deprecated. Consider using gulp.src base instead: https://github.com/gulpjs/gulp/blob/master/docs/API.md#optionsbase');
+  }
+
   filename = options.filename || 'app.manifest';
   exclude = Array.prototype.concat(options.exclude || []);
   hasher = crypto.createHash('sha256');
@@ -51,9 +55,16 @@ function manifest(options) {
     }
 
     prefix = options.prefix || '';
-    filepath = prefix + slash(file.relative);
+    filepath = slash(file.relative);
 
-    contents.push(encodeURI(slash(filepath)));
+    if(options.basePath) { // deprecated
+      var relative = path.relative(file.base, __dirname);
+      filepath = filepath.replace(new RegExp('^' + path.join(relative, options.basePath)), '');
+    }
+
+    filepath = prefix + filepath;
+
+    contents.push(encodeURI(filepath));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
