@@ -5,6 +5,7 @@ var through   = require('through'),
     crypto    = require('crypto'),
     path      = require('path'),
     minimatch = require('minimatch'),
+    slash     = require('slash'),
     lineBreak = '\n';
 
 function manifest(options) {
@@ -50,9 +51,9 @@ function manifest(options) {
     }
 
     prefix = options.prefix || '';
-    filepath = prefix + file.relative;
+    filepath = prefix + slash(file.relative);
 
-    contents.push(encodeURI(file.relative));
+    contents.push(encodeURI(slash(filepath)));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');

@@ -25,13 +25,13 @@
   "devDependencies": {
     "event-stream": "^3.1.7",
     "mocha": "~1.16.2",
-    "should": "~2.1.1",
-    "slash": "^1.0.0"
+    "should": "~2.1.1"
   },
   "dependencies": {
     "gulp-util": "~2.2.6",
     "minimatch": "~2.0.1",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "slash": "^1.0.0"
   },
   "bugs": {
     "url": "https://github.com/hillmanov/gulp-manifest/issues"
