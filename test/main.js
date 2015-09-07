@@ -93,20 +93,27 @@ describe('gulp-manifest', function() {
   });
 
   it('Should work with hash multiple times', function (done) {
-    var pending = 2;
     function generateWithHash() {
-      var stream = manifestPlugin({ hash: true });
-      stream.on('data', function (data) {
-        data.contents.toString().should.contain('# hash: ');
+      return new Promise(function(resolve, reject) {
+        var stream = manifestPlugin({ hash: true });
+        var contents = '';
+        stream.on('data', function (data) {
+          contents += data.contents.toString();
+        });
+        stream.once('end', function () {
+          contents.should.contain('# hash: ');
+          resolve();
+        });
+        fakeFiles.forEach(stream.write.bind(stream));
+        stream.end();
       });
-      stream.once('end', function () {
-        if (--pending <= 0) done();
-      });
-      fakeFiles.forEach(stream.write.bind(stream));
-      stream.end();
     }
-    generateWithHash();
-    generateWithHash();
+    Promise.all([
+      generateWithHash(),
+      generateWithHash()
+    ]).then(function() {
+      done();
+    });
   });
 
   it('Should generate a valid fallback section', function(done) {
