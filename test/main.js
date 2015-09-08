@@ -58,11 +58,14 @@ describe('gulp-manifest', function() {
         hash: false
     });
 
+    var contents = '';
     stream.on('data', function(data) {
-      var contents = data.contents.toString();
-      contents.should.contain('fixture/hello.js');
+      contents += data.contents.toString();
     });
-    stream.once('end', done);
+    stream.once('end', function() {
+      contents.should.contain('fixture/hello.js');
+      done();
+    });
 
     stream.write(new gutil.File({
         path: path.resolve('test\\fixture\\hello.js'),
@@ -79,34 +82,44 @@ describe('gulp-manifest', function() {
       exclude: ['file2.js', 'file4.js'],
     });
 
+    var contents = '';
     stream.on('data', function(data) {
-      var contents = data.contents.toString();
+      contents += data.contents.toString();
+    });
+    stream.once('end', function() {
       contents.should.contain('file1.js');
       contents.should.not.contain('file2.js');
       contents.should.contain('file3.js');
       contents.should.not.contain('file4.js');
+      done();
     });
-    stream.once('end', done);
 
     fakeFiles.forEach(stream.write.bind(stream));
     stream.end();
   });
 
   it('Should work with hash multiple times', function (done) {
-    var pending = 2;
     function generateWithHash() {
-      var stream = manifestPlugin({ hash: true });
-      stream.on('data', function (data) {
-        data.contents.toString().should.contain('# hash: ');
+      return new Promise(function(resolve, reject) {
+        var stream = manifestPlugin({ hash: true });
+        var contents = '';
+        stream.on('data', function (data) {
+          contents += data.contents.toString();
+        });
+        stream.once('end', function () {
+          contents.should.contain('# hash: ');
+          resolve();
+        });
+        fakeFiles.forEach(stream.write.bind(stream));
+        stream.end();
       });
-      stream.once('end', function () {
-        if (--pending <= 0) done();
-      });
-      fakeFiles.forEach(stream.write.bind(stream));
-      stream.end();
     }
-    generateWithHash();
-    generateWithHash();
+    Promise.all([
+      generateWithHash(),
+      generateWithHash()
+    ]).then(function() {
+      done();
+    });
   });
 
   it('Should generate a valid fallback section', function(done) {
@@ -116,14 +129,18 @@ describe('gulp-manifest', function() {
       network: ['http://*', 'https://*', '*']
     });
 
+    var contents = '',
+        relatives = [];
     stream.on('data', function(data) {
       data.should.be.an.instanceOf(gutil.File);
-      data.relative.should.eql('cache.manifest');
-
-      var contents = data.contents.toString();
-      contents.should.contain('FALLBACK:\n/ /offline.html');
+      relatives.push(data.relative);
+      contents += data.contents.toString();
     });
-    stream.once('end', done);
+    stream.once('end', function() {
+      contents.should.contain('FALLBACK:\n/ /offline.html');
+      relatives.indexOf('cache.manifest').should.not.be.equal(-1);
+      done();
+    });
     stream.end();
   });
 
@@ -133,11 +150,14 @@ describe('gulp-manifest', function() {
           prefix: prefix
         });
 
+    var contents = '';
     stream.on('data', function(data) {
-      var contents = data.contents.toString();
-      contents.should.contain(prefix);
+      contents += data.contents.toString();
     });
-    stream.once('end', done);
+    stream.once('end', function() {
+      contents.should.contain(prefix);
+      done();
+    });
 
     stream.write(new gutil.File({
       path: path.resolve('test\\fixture\\hello.js'),
@@ -153,12 +173,15 @@ describe('gulp-manifest', function() {
     var filepath = 'test\\fixture\\hello.js',
         stream = manifestPlugin();
 
+    var contents = '';
     stream.on('data', function(data) {
-      var contents = data.contents.toString();
-      contents.should.contain(slash(filepath));
+      contents += data.contents.toString();
     });
 
-    stream.once('end', done);
+    stream.once('end', function() {
+      contents.should.contain(slash(filepath));
+      done();
+    });
 
     stream.write(new gutil.File({
       path: path.resolve(filepath),
@@ -176,12 +199,15 @@ describe('gulp-manifest', function() {
           basePath: basePath
         });
 
+    var contents = '';
     stream.on('data', function(data) {
-      var contents = data.contents.toString();
-      contents.should.not.contain(basePath);
+      contents += data.contents.toString();
     });
 
-    stream.once('end', done);
+    stream.once('end', function() {
+      contents.should.not.contain(basePath);
+      done();
+    });
 
     stream.write(new gutil.File({
       path: path.resolve(basePath + '\\test\\fixture\\hello.js'),
@@ -202,11 +228,15 @@ describe('gulp-manifest', function() {
       preferOnline: true
     });
 
+    var contents = '', relatives = [];
     stream.on('data', function(data) {
       data.should.be.an.instanceOf(gutil.File);
-      data.relative.should.eql('cache.manifest');
 
-      var contents = data.contents.toString();
+      relatives.push(data.relative);
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
       contents.should.startWith('CACHE MANIFEST');
       contents.should.contain('CACHE:');
       contents.should.contain('file1.js');
@@ -218,9 +248,10 @@ describe('gulp-manifest', function() {
       contents.should.not.contain('exclude');
       contents.should.contain('include1.js');
       contents.should.contain('include2.js');
-    });
 
-    stream.once('end', done);
+      relatives.indexOf('cache.manifest').should.not.be.equal(-1);
+      done();
+    });
 
     fakeFiles.forEach(stream.write.bind(stream));
 

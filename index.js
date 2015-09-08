@@ -5,12 +5,17 @@ var through   = require('through'),
     crypto    = require('crypto'),
     path      = require('path'),
     minimatch = require('minimatch'),
+    slash     = require('slash'),
     lineBreak = '\n';
 
 function manifest(options) {
   var filename, exclude, hasher, cwd, contents;
 
   options = options || {};
+
+  if(options.basePath) {
+    gutil.log('basePath option is deprecated. Consider using gulp.src base instead: https://github.com/gulpjs/gulp/blob/master/docs/API.md#optionsbase');
+  }
 
   filename = options.filename || 'app.manifest';
   exclude = Array.prototype.concat(options.exclude || []);
@@ -50,7 +55,14 @@ function manifest(options) {
     }
 
     prefix = options.prefix || '';
-    filepath = prefix + file.relative;
+    filepath = slash(file.relative);
+
+    if(options.basePath) { // deprecated
+      var relative = path.relative(file.base, __dirname);
+      filepath = filepath.replace(new RegExp('^' + path.join(relative, options.basePath)), '');
+    }
+
+    filepath = prefix + filepath;
 
     contents.push(encodeURI(filepath));
 
