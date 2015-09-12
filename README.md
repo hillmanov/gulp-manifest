@@ -130,7 +130,7 @@ Therefore, it's recommended to add a hash to the filenames's, akin to rails or y
 
 Sometimes you might want to alter the way paths are passed to the plugin. The correct way will be to provide options to `gulp.src` so that it generates correct paths.
 
-Say, you have a single folder named `public`, which is the top-level directory that's served to the browser. In the same directory, you have the css, js and asset files under different directories as well as the html files.
+Say, you have a single folder named `public`, which is the top-level directory that's served to the browser. In the same directory, you have the `css`, `js` and `asset` files under different directories, along with the `html` files.
 
 ```
 public/
@@ -144,7 +144,7 @@ public/
 └── index.html
 ```
 
-Say use `gulp.src`  (you could use file globbing, but for simplicity's sake, will use separate paths) as following,
+Say you wrote your `gulp.src`  (you could use file globbing, but for simplicity's sake, will use separate paths) as following,
 
 ```
 gulp.src([
