@@ -4,6 +4,7 @@ var fs             = require('fs'),
     slash          = require('slash'),
     should         = require('should'),
     gutil          = require('gulp-util'),
+    gulp           = require('gulp'),
     mocha          = require('mocha'),
     manifestPlugin = require('../');
 
@@ -169,6 +170,64 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
+  it('Should lookup fileglobs in directories', function(done) {
+    var stream = manifestPlugin();
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.should.match(/^subdir\/somefile.txt$/gm);
+      contents.should.match(/^subdir\/other\/file.txt$/gm);
+      done();
+    });
+
+    gulp.src(path.join(__dirname, 'fixtures/**'))
+    .pipe(stream);
+  });
+
+  it('Should lookup fileglobs relative to working directory when gulp.src.base is ./', function(done) {
+    var stream = manifestPlugin();
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.should.match(/^test\/fixtures\/subdir\/somefile.txt$/gm);
+      contents.should.match(/^test\/fixtures\/subdir\/other\/file.txt$/gm);
+      done();
+    });
+
+    gulp.src(path.join(__dirname, 'fixtures/**'), {
+      base: './'
+    })
+    .pipe(stream);
+  });
+
+  it('Should lookup fileglobs relative to gulp.src.base', function(done) {
+    var stream = manifestPlugin();
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.should.match(/^fixtures\/subdir\/somefile.txt$/gm);
+      contents.should.match(/^fixtures\/subdir\/other\/file.txt$/gm);
+      done();
+    });
+
+    gulp.src(path.join(__dirname, 'fixtures/**'), {
+      base: 'test'
+    })
+    .pipe(stream);
+  });
+
   it('Should add correct path', function(done) {
     var filepath = 'test\\fixture\\hello.js',
         stream = manifestPlugin();
@@ -179,14 +238,14 @@ describe('gulp-manifest', function() {
     });
 
     stream.once('end', function() {
-      contents.should.contain(slash(filepath));
+      contents.should.match(new RegExp('^' + slash(filepath) + '$', 'gm'));
       done();
     });
 
     stream.write(new gutil.File({
-      path: path.resolve(filepath),
+      path: slash(filepath),
       cwd: path.resolve('test/'),
-      base: path.resolve('test/'),
+      base: './',
       contents: new Buffer('notimportant')
     }));
 
@@ -210,9 +269,9 @@ describe('gulp-manifest', function() {
     });
 
     stream.write(new gutil.File({
-      path: path.resolve(basePath + '\\test\\fixture\\hello.js'),
+      path: slash(basePath + '\\test\\fixture\\hello.js'),
       cwd: path.resolve('test/'),
-      base: path.resolve('test/'),
+      base: path.resolve('./'),
       contents: new Buffer('notimportant')
     }));
 
