@@ -281,7 +281,7 @@ describe('gulp-manifest', function() {
   it('Should exclude special files', function(done) {
     var stream = manifestPlugin({
       filename: 'cache.manifest',
-      exclude:  ['file2.js','exclude/**',"children2/**/exclude*.js"],
+      exclude:  ['file2.js','exclude/**','children2/**/exclude*.js'],
       hash: true,
       network: ['http://*', 'https://*', '*'],
       preferOnline: true
@@ -315,5 +315,34 @@ describe('gulp-manifest', function() {
     fakeFiles.forEach(stream.write.bind(stream));
 
     stream.end();
+  });
+
+   it('Should exclude backslash excaped exclusions', function(done) {
+    var stream = manifestPlugin({
+      filename: 'cache.manifest',
+      exclude:  ['some\\file.txt']
+    });
+
+    var contents = '', relatives = [];
+    stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+
+      relatives.push(data.relative);
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.should.startWith('CACHE MANIFEST');
+      contents.should.contain('CACHE:');
+      contents.should.contain('somefile.txt');
+      contents.should.not.contain('some/file.js');
+      relatives.indexOf('cache.manifest').should.not.be.equal(-1);
+      done();
+    });
+
+    gulp.src(path.join(__dirname, 'fixtures/**'), {
+      base: 'test'
+    })
+    .pipe(stream);
   });
 });
