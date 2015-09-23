@@ -345,4 +345,60 @@ describe('gulp-manifest', function() {
     })
     .pipe(stream);
   });
+
+  it('Should add includes provided by option.include', function(done) {
+    var basePath = 'basedir',
+        stream = manifestPlugin({
+          include: [
+            'foo/bar'
+          ]
+        });
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.should.contain('baz');
+      contents.should.contain('foo/bar');
+      done();
+    });
+
+    stream.write(new gutil.File({
+      path: 'baz',
+      base: path.resolve('./'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
+  it('Should not duplicate includes', function(done) {
+    var basePath = 'basedir',
+        stream = manifestPlugin({
+          include: [
+            'foobar'
+          ]
+        });
+
+    var contents = '', count = 0;
+    stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.match(/foobar/gm).length.should.equal(1);
+      done();
+    });
+
+    stream.write(new gutil.File({
+      path: 'foobar',
+      base: path.resolve('./'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
 });
