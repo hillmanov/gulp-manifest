@@ -27,6 +27,12 @@ Default: `undefined`
 
 Add a prefix to the file paths. Useful when your files are in a different URL than the page.
 
+#### options.suffix
+Type: `String`  
+Default: `undefined`  
+
+Add a suffix to the file paths. Useful when your files have query string.
+
 #### options.filename
 Type: `String`
 Default: `'app.manifest'`
