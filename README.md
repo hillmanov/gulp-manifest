@@ -1,7 +1,7 @@
-# gulp-manifest 
+# gulp-manifest
 > Generate HTML5 Cache Manifest files. Submitted by [Scott Hillman](https://github.com/hillmanov/).
 
-Big thanks to [Gunther Brunner](https://github.com/gunta/) for writing the [grunt-manifest](https://github.com/gunta/grunt-manifest) plugin. This plugin was heavily influenced by his great work. 
+Big thanks to [Gunther Brunner](https://github.com/gunta/) for writing the [grunt-manifest](https://github.com/gunta/grunt-manifest) plugin. This plugin was heavily influenced by his great work.
 
 Visit the [HTML 5 Guide to AppCache](http://www.html5rocks.com/en/tutorials/appcache/beginner/) for more information on Cache Manifest files.
 
@@ -22,8 +22,8 @@ npm install gulp-manifest --save-dev
 This controls how this task (and its helpers) operate and should contain key:value pairs, see options below.
 
 #### options.prefix
-Type: `String`  
-Default: `undefined`  
+Type: `String`
+Default: `undefined`
 
 Add a prefix to the file paths. Useful when your files are in a different URL than the page.
 
@@ -33,59 +33,65 @@ Default: `undefined`
 
 Add a suffix to the file paths. Useful when your files have query string.
 
-#### options.filename
+#### options.basePath
 Type: `String`  
-Default: `"app.manifest"`  
+Default: `undefined`  
+
+Set a basepath for the files. Useful when the files are not served from the toplevel directory.
+
+#### options.filename
+Type: `String`
+Default: `'app.manifest'`
 
 Set name of the Cache Manifest file.
 
 #### options.cache
-Type: `String`  
-Default: `undefined`  
+Type: `String`
+Default: `undefined`
 
 Adds manually a string to the **CACHE** section. Needed when you have cache buster for example.
 
 #### options.exclude
-Type: `String` `Array`  
-Default: `undefined`  
+Type: `String` `Array`
+Default: `undefined`
 
 Exclude specific files from the Cache Manifest file.
 
 #### options.network
-Type: `String` `Array`  
-Default: `"*"` (By default, an online whitelist wildcard flag is added)  
+Type: `String` `Array`
+Default: `'*'` (By default, an online whitelist wildcard flag is added)
 
 Adds a string to the **NETWORK** section.
 
 See [here](http://diveintohtml5.info/offline.html#network) for more information.
 
 #### options.fallback
-Type: `String` `Array`  
-Default: `undefined`  
+Type: `String` `Array`
+Default: `undefined`
 
 Adds a string to the **FALLBACK** section.
 
 See [here](http://diveintohtml5.info/offline.html#fallback) for more information.
 
 #### options.preferOnline
-Type: `Boolean`  
-Default: `undefined`  
+Type: `Boolean`
+Default: `undefined`
 
 Adds a string to the **SETTINGS** section, specifically the cache mode flag of the ```prefer-online``` state.
 
 See [here](http://www.whatwg.org/specs/web-apps/current-work/multipage/offline.html#concept-appcache-mode-prefer-online) for more information.
 
 #### options.timestamp
-Type: `Boolean`  
-Default: `true`  
+Type: `Boolean`
+Default: `true`
 
 Adds a timestamp as a comment for easy versioning.
 
 Note: timestamp will invalidate application cache whenever cache manifest is rebuilt, even if contents of files in `src` have not changed.
 
 #### options.hash
-Type: `Boolean`  
-Default: `false`  
+Type: `Boolean`
+Default: `false`
 
 Adds a sha256 hash of all `src` files (actual contents) as a comment.
 
@@ -109,24 +115,83 @@ This will ensure that application cache invalidates whenever actual file content
 
 ### Output example
 
-    CACHE MANIFEST
+```
+  CACHE MANIFEST
 
-    CACHE:
-    js/app.js
-    css/style
-    css/style.css
-    js/zepto.min.js
-    js/script.js
-    some_files/index.html
-    some_files/about.html
+  CACHE:
+  js/app.js
+  css/style
+  css/style.css
+  js/zepto.min.js
+  js/script.js
+  some_files/index.html
+  some_files/about.html
 
-    NETWORK:
-    *
+  NETWORK:
+  *
 
-    # hash: 76f0ef591f999871e1dbdf6d5064d1276d80846feeef6b556f74ad87b44ca16a
-
+  # hash: 76f0ef591f999871e1dbdf6d5064d1276d80846feeef6b556f74ad87b44ca16a
+```
 
 You do need to be fully aware of standard browser caching.
 If the files in **CACHE** are in the network cache, they won't actually update,
 since the network cache will spit back the same file to the application cache.
 Therefore, it's recommended to add a hash to the filenames's, akin to rails or yeoman. See [here](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/) why query strings are not recommended.
+
+### Getting correct paths
+
+Sometimes you might want to alter the way paths are passed to the plugin. The correct way will be to provide options to `gulp.src` so that it generates correct paths.
+
+Say, you have a single folder named `public`, which is the top-level directory that's served to the browser. In the same directory, you have the `css`, `js` and `asset` files under different directories, along with the `html` files.
+
+```
+public/
+├── assets
+│   ├── cover.png
+│   └── logo.png
+├── css
+│   └── style.css
+├── js
+│   └── app.js
+└── index.html
+```
+
+Say you wrote your `gulp.src`  (you could use file globbing, but for simplicity's sake, will use separate paths) as following,
+
+```
+gulp.src([
+  'public/assets/**',
+  'public/css/**',
+  'public/js/**'
+])
+```
+
+It'll generate the following paths,
+
+```
+cover.png
+logo.png
+style.css
+app.js
+```
+
+Which is totally unusable. Ideally, what you would want is the following,
+
+```
+assets/cover.png
+assets/logo.png
+css/style.css
+js/app.js
+```
+
+To achieve this, you will need to use the `base` option in `gulp.src` as follows,
+
+```
+gulp.src([
+  'public/assets/**',
+  'public/css/**',
+  'public/js/**'
+], { base: 'public/' })
+```
+
+You can play with the `base` option of `gulp.src` to achieve the result you want.

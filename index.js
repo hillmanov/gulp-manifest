@@ -1,20 +1,25 @@
 "use strict";
 
-var through = require('through'),
-  gutil = require('gulp-util'),
-  crypto = require('crypto'),
-  path = require('path'),
-  minimatch = require('minimatch'),
-  lineBreak = '\n',
-  isWin = /^win/.test(process.platform);
+var through   = require('through'),
+    gutil     = require('gulp-util'),
+    crypto    = require('crypto'),
+    path      = require('path'),
+    minimatch = require('minimatch'),
+    slash     = require('slash'),
+    lineBreak = '\n';
 
 function manifest(options) {
-  var filename, exclude, hasher, cwd, contents;
+  var filename, exclude, include, hasher, cwd, contents;
 
   options = options || {};
 
+  if(options.basePath) {
+    gutil.log('basePath option is deprecated. Consider using gulp.src base instead: https://github.com/gulpjs/gulp/blob/master/docs/API.md#optionsbase');
+  }
+
   filename = options.filename || 'app.manifest';
   exclude = Array.prototype.concat(options.exclude || []);
+  include = Array.prototype.concat(options.include || []);
   hasher = crypto.createHash('sha256');
   cwd = process.cwd();
   contents = [];
@@ -29,8 +34,10 @@ function manifest(options) {
     contents.push('# Revision: ' + options.revision);
   }
 
-  contents.push(lineBreak);
+  contents.push('');
   contents.push('CACHE:');
+
+  contents = contents.concat(include);
 
   if (options.cache) {
     options.cache.forEach(function (file) {
@@ -46,20 +53,36 @@ function manifest(options) {
     return exclude.some(minimatch.bind(null, filePath));
   }
 
+  function minmatchArray(path, arr) {
+    for (var i = 0; i < arr.length; i++) {
+      if(minimatch(path, arr[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function writeToManifest(file) {
-    var filepath,
-      relativeFilePath = getRelativeFilePath(file);
+    var prefix, suffix, filepath;
 
     if (file.isNull())   return;
-    if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest', 'Streaming not supported'));
+    if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
+
 
     if (shouldExcludeFile(relativeFilePath)) {
       return;
     }
 
-    filepath = [options.prefix || '', relativeFilePath, options.suffix || ''].join('');
+    prefix = options.prefix || '';
+    suffix = options.suffix || '';
+    filepath = slash(file.relative);
 
-    contents.push(encodeURI(filepath));
+    if(options.basePath) { // deprecated
+      var relative = path.relative(file.base, __dirname);
+      filepath = filepath.replace(new RegExp('^' + path.join(relative, options.basePath)), '');
+    }
+
+    contents.push(encodeURI([prefix, filepath, suffix].join('')));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
@@ -69,7 +92,7 @@ function manifest(options) {
   function endStream() {
     // Network section
     options.network = options.network || ['*'];
-    contents.push(lineBreak);
+    contents.push('');
     contents.push('NETWORK:');
     options.network.forEach(function (file) {
       contents.push(encodeURI(file));
@@ -77,8 +100,11 @@ function manifest(options) {
 
     // Fallback section
     if (options.fallback) {
-      contents.push(lineBreak);
+      contents.push('');
       contents.push('FALLBACK:');
+      if (typeof options.fallback === 'string') {
+        options.fallback = [options.fallback];
+      }
       options.fallback.forEach(function (file) {
         var firstSpace = file.indexOf(' ');
 
@@ -96,14 +122,15 @@ function manifest(options) {
 
     // Settings section
     if (options.preferOnline) {
-      contents.push(lineBreak);
+      contents.push('');
       contents.push('SETTINGS:');
       contents.push('prefer-online');
     }
 
     // output hash to cache manifest
     if (options.hash) {
-      contents.push('\n# hash: ' + hasher.digest("hex"));
+      contents.push('');
+      contents.push('# hash: ' + hasher.digest("hex"));
     }
 
     var manifestFile = new gutil.File({
