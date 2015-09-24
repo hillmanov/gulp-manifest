@@ -33,12 +33,6 @@ Default: `undefined`
 
 Add a suffix to the file paths. Useful when your files have query string.
 
-#### options.basePath
-Type: `String`  
-Default: `undefined`  
-
-Set a basepath for the files. Useful when the files are not served from the toplevel directory.
-
 #### options.filename
 Type: `String`
 Default: `'app.manifest'`

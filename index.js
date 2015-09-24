@@ -18,8 +18,8 @@ function manifest(options) {
   }
 
   filename = options.filename || 'app.manifest';
-  exclude = Array.prototype.concat(options.exclude || []);
   include = Array.prototype.concat(options.include || []);
+  exclude = Array.prototype.concat(options.exclude || []).concat(include);
   hasher = crypto.createHash('sha256');
   cwd = process.cwd();
   contents = [];
@@ -45,21 +45,8 @@ function manifest(options) {
     });
   }
 
-  function getRelativeFilePath(file) {
-    return isWin ? file.relative.replace(/\\/g, '/') : file.relative;
-  }
-
   function shouldExcludeFile(filePath) {
     return exclude.some(minimatch.bind(null, filePath));
-  }
-
-  function minmatchArray(path, arr) {
-    for (var i = 0; i < arr.length; i++) {
-      if(minimatch(path, arr[i])) {
-        return true;
-      }
-    }
-    return false;
   }
 
   function writeToManifest(file) {
@@ -68,21 +55,22 @@ function manifest(options) {
     if (file.isNull())   return;
     if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
 
+    prefix = slash(options.prefix || '');
+    suffix = slash(options.suffix || '');
+    filepath = slash(file.relative);
 
-    if (shouldExcludeFile(relativeFilePath)) {
+    if (shouldExcludeFile(filepath)) {
       return;
     }
-
-    prefix = options.prefix || '';
-    suffix = options.suffix || '';
-    filepath = slash(file.relative);
 
     if(options.basePath) { // deprecated
       var relative = path.relative(file.base, __dirname);
       filepath = filepath.replace(new RegExp('^' + path.join(relative, options.basePath)), '');
     }
 
-    contents.push(encodeURI([prefix, filepath, suffix].join('')));
+    filepath = [prefix, filepath, suffix].join('');
+
+    contents.push(encodeURI(filepath));
 
     if (options.hash) {
       hasher.update(file.contents, 'binary');
