@@ -95,7 +95,7 @@ This will ensure that application cache invalidates whenever actual file content
 
 
     gulp.task('manifest', function(){
-      gulp.src(['build/*'])
+      gulp.src(['build/*'], { base: './' })
         .pipe(manifest({
           hash: true,
           preferOnline: true,
@@ -132,7 +132,68 @@ If the files in **CACHE** are in the network cache, they won't actually update,
 since the network cache will spit back the same file to the application cache.
 Therefore, it's recommended to add a hash to the filenames's, akin to rails or yeoman. See [here](http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/) why query strings are not recommended.
 
-### Getting correct paths
+### Composition of paths
+
+Sometimes your assets are served from different source directories. To route these correctly the `gulp.src.base` option can be used to [define a glob's base path](https://github.com/gulpjs/gulp/blob/master/docs/API.md#optionsbase). Later multiple streams can be composed with [merge-stream](https://github.com/grncdr/merge-stream), so that one single manifest file is created from them
+
+```javascript
+var path = require('path');
+var mergeStream = require('merge-stream');
+
+var config = {
+  app: './app',
+  tmp: './tmp'
+};
+
+mergeStream(
+  gulp.src([
+    path.join(config.app + '*.html'),
+    path.join(config.app + 'assets/*.{png,svg,jpg}'),
+    path.join(config.app + 'js/*.js')
+  ], {
+    base: config.app
+  }),
+  gulp.src([
+  	path.join(config.tmp + 'css/*.css')
+  ], {
+    base: config.tmp
+  })
+);
+.pipe(plugins.manifest({
+  hash: true,
+  preferOnline: false,
+  network: ['*'],
+  filename: 'appcache.manifest'
+}))
+.pipe(gulp.dest(config.tmp));
+``` 
+
+for the given file tree
+
+```
+├── app
+│   ├── assets
+│   │   ├── cover.png
+│   │   └── logo.svg
+│   ├── index.html
+│   ├── js
+│   │   └── script.js
+│   └── scss
+│       └── style.scss
+└── build
+    └── css
+        └── style.css
+```
+
+will result in
+
+```
+index.html
+assets/cover.png
+assets/logo.svg
+js/script.js
+css/style.css
+```
 
 Sometimes you might want to alter the way paths are passed to the plugin. The correct way will be to provide options to `gulp.src` so that it generates correct paths.
 
@@ -149,43 +210,3 @@ public/
 │   └── app.js
 └── index.html
 ```
-
-Say you wrote your `gulp.src`  (you could use file globbing, but for simplicity's sake, will use separate paths) as following,
-
-```
-gulp.src([
-  'public/assets/**',
-  'public/css/**',
-  'public/js/**'
-])
-```
-
-It'll generate the following paths,
-
-```
-cover.png
-logo.png
-style.css
-app.js
-```
-
-Which is totally unusable. Ideally, what you would want is the following,
-
-```
-assets/cover.png
-assets/logo.png
-css/style.css
-js/app.js
-```
-
-To achieve this, you will need to use the `base` option in `gulp.src` as follows,
-
-```
-gulp.src([
-  'public/assets/**',
-  'public/css/**',
-  'public/js/**'
-], { base: 'public/' })
-```
-
-You can play with the `base` option of `gulp.src` to achieve the result you want.
