@@ -99,6 +99,26 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
+  it('Should allow options.exclude to be a string', function(done) {
+    var stream = manifestPlugin({
+      exclude: 'file2.js'
+    });
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+    stream.once('end', function() {
+      contents.should.contain('file1.js');
+      contents.should.not.contain('file2.js');
+      contents.should.contain('file3.js');
+      done();
+    });
+
+    fakeFiles.forEach(stream.write.bind(stream));
+    stream.end();
+  });
+
   it('Should work with hash multiple times', function (done) {
     function generateWithHash() {
       return new Promise(function(resolve, reject) {
@@ -375,6 +395,32 @@ describe('gulp-manifest', function() {
           include: [
             'foo/bar'
           ]
+        });
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+
+    stream.once('end', function() {
+      contents.should.contain('baz');
+      contents.should.contain('foo/bar');
+      done();
+    });
+
+    stream.write(new gutil.File({
+      path: 'baz',
+      base: path.resolve('./'),
+      contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
+  it('Should allow option.include to be a string', function(done) {
+    var basePath = 'basedir',
+        stream = manifestPlugin({
+          include: 'foo/bar'
         });
 
     var contents = '';
