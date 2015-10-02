@@ -180,7 +180,7 @@ for the given file tree
 │   │   └── script.js
 │   └── scss
 │       └── style.scss
-└── build
+└── tmp
     └── css
         └── style.css
 ```
