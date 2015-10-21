@@ -9,7 +9,7 @@ var through   = require('through'),
     lineBreak = '\n';
 
 function manifest(options) {
-  var filename, exclude, include, hasher, cwd, contents;
+  var filename, exclude, cache, include, hasher, cwd, contents;
 
   options = options || {};
 
@@ -20,6 +20,7 @@ function manifest(options) {
   filename = options.filename || 'app.manifest';
   include = Array.prototype.concat(options.include || []);
   exclude = Array.prototype.concat(options.exclude || []).concat(include);
+  cache = Array.prototype.concat(options.cache || []);
   hasher = crypto.createHash('sha256');
   cwd = process.cwd();
   contents = [];
@@ -39,11 +40,9 @@ function manifest(options) {
 
   contents = contents.concat(include);
 
-  if (options.cache) {
-    options.cache.forEach(function (file) {
-      contents.push(encodeURI(file));
-    });
-  }
+  cache.forEach(function (file) {
+    contents.push(encodeURI(file));
+  });
 
   function shouldExcludeFile(filePath) {
     return exclude.some(minimatch.bind(null, filePath));

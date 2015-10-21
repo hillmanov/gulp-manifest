@@ -470,4 +470,45 @@ describe('gulp-manifest', function() {
 
     stream.end();
   });
+
+  it('Should handle option.cache as a string', function(done) {
+    var stream = manifestPlugin({
+      filename: 'cache.manifest',
+      cache: 'foo.html'
+    });
+
+    stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+      data.relative.should.eql('cache.manifest');
+
+      var contents = data.contents.toString();
+      contents.should.startWith('CACHE MANIFEST');
+      contents.should.contain('foo.html');
+    });
+    stream.once('end', done);
+
+    fakeFiles.forEach(stream.write.bind(stream));
+    stream.end();
+  });
+
+  it('Should handle option.cache as an array', function(done) {
+    var stream = manifestPlugin({
+      filename: 'cache.manifest',
+      cache: ['foo.html', 'bar.js']
+    });
+
+    stream.on('data', function(data) {
+      data.should.be.an.instanceOf(gutil.File);
+      data.relative.should.eql('cache.manifest');
+
+      var contents = data.contents.toString();
+      contents.should.startWith('CACHE MANIFEST');
+      contents.should.contain('foo.html');
+      contents.should.contain('bar.js');
+    });
+    stream.once('end', done);
+
+    fakeFiles.forEach(stream.write.bind(stream));
+    stream.end();
+  });
 });
