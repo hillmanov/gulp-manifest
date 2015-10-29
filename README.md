@@ -40,7 +40,7 @@ Default: `'app.manifest'`
 Set name of the Cache Manifest file.
 
 #### options.cache
-Type: `String`
+Type: `String` `Array`
 Default: `undefined`
 
 Adds manually a string to the **CACHE** section. Needed when you have cache buster for example.
@@ -166,7 +166,7 @@ mergeStream(
   filename: 'appcache.manifest'
 }))
 .pipe(gulp.dest(config.tmp));
-``` 
+```
 
 for the given file tree
 
