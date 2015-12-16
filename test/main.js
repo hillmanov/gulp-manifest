@@ -88,12 +88,12 @@ describe('gulp-manifest', function() {
       contents += data.contents.toString();
     });
     stream.once('end', function() {
-      contents.should.contain('fixture/hello.js');
+      contents.should.contain('fixtures/subdir/somefile.txt');
       done();
     });
 
     stream.write(new gutil.File({
-        path: path.resolve('test/fixture/hello.js'),
+        path: path.resolve('test/fixtures/subdir/somefile.txt'),
         cwd: path.resolve('test/'),
         base: path.resolve('test/'),
         contents: new Buffer('notimportant')
