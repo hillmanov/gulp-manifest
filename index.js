@@ -9,7 +9,7 @@ var through   = require('through'),
     lineBreak = '\n';
 
 function manifest(options) {
-  var filename, exclude, cache, include, hasher, cwd, contents;
+  var filename, exclude, cache, include, hasher, cwd, contents, timestamp;
 
   options = options || {};
 
@@ -24,10 +24,11 @@ function manifest(options) {
   hasher = crypto.createHash('sha256');
   cwd = process.cwd();
   contents = [];
+  timestamp = options.timestamp || (typeof(options.timestamp) === 'undefined');
 
   contents.push('CACHE MANIFEST');
 
-  if (options.timestamp) {
+  if (timestamp) {
     contents.push('# Time: ' + new Date());
   }
 
