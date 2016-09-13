@@ -78,6 +78,31 @@ describe('gulp-manifest', function() {
     stream.end();
   });
 
+  it('Should work with Unix file paths', function(done) {
+    var stream = manifestPlugin({
+        hash: false
+    });
+
+    var contents = '';
+    stream.on('data', function(data) {
+      contents += data.contents.toString();
+    });
+    stream.once('end', function() {
+      contents.should.contain('fixtures/subdir/somefile.txt');
+      done();
+    });
+
+    stream.write(new gutil.File({
+        path: path.resolve('test/fixtures/subdir/somefile.txt'),
+        cwd: path.resolve('test/'),
+        base: path.resolve('test/'),
+        contents: new Buffer('notimportant')
+    }));
+
+    stream.end();
+  });
+
+
   it('Should exclude multiple files', function(done) {
     var stream = manifestPlugin({
       exclude: ['file2.js', 'file4.js'],
