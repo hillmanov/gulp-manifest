@@ -3,13 +3,13 @@ var fs             = require('fs'),
     es             = require('event-stream'),
     slash          = require('slash'),
     should         = require('should'),
-    gutil          = require('gulp-util'),
+    Vinyl          = require('vinyl'),
     gulp           = require('gulp'),
     mocha          = require('mocha'),
     manifestPlugin = require('../');
 
 function createFakeFile(filename) {
-  return new gutil.File({
+  return new Vinyl({
     path: path.resolve('test/fixture/' + filename),
     cwd: path.resolve('test/'),
     base: path.resolve('test/fixture/'),
@@ -36,7 +36,7 @@ describe('gulp-manifest', function() {
     });
 
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       data.relative.should.eql('cache.manifest');
 
       var contents = data.contents.toString();
@@ -68,7 +68,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
         path: path.resolve('test\\fixture\\hello.js'),
         cwd: path.resolve('test/'),
         base: path.resolve('test/'),
@@ -153,7 +153,7 @@ describe('gulp-manifest', function() {
     var contents = '',
         relatives = [];
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       relatives.push(data.relative);
       contents += data.contents.toString();
     });
@@ -180,7 +180,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: path.resolve('test\\fixture\\hello.js'),
       cwd: path.resolve('test/'),
       base: path.resolve('test/'),
@@ -202,7 +202,7 @@ describe('gulp-manifest', function() {
     });
     stream.once('end', done);
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: path.resolve('test\\fixture\\hello.js'),
       cwd: path.resolve('test/'),
       base: path.resolve('test/'),
@@ -285,7 +285,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: slash(filepath),
       cwd: path.resolve('test/'),
       base: './',
@@ -311,7 +311,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: slash(basePath + '\\test\\fixture\\hello.js'),
       cwd: path.resolve('test/'),
       base: path.resolve('./'),
@@ -332,7 +332,7 @@ describe('gulp-manifest', function() {
 
     var contents = '', relatives = [];
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
 
       relatives.push(data.relative);
       contents += data.contents.toString();
@@ -368,7 +368,7 @@ describe('gulp-manifest', function() {
 
     var contents = '', relatives = [];
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
 
       relatives.push(data.relative);
       contents += data.contents.toString();
@@ -408,7 +408,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: 'baz',
       base: path.resolve('./'),
       contents: new Buffer('notimportant')
@@ -434,7 +434,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: 'baz',
       base: path.resolve('./'),
       contents: new Buffer('notimportant')
@@ -453,7 +453,7 @@ describe('gulp-manifest', function() {
 
     var contents = '', count = 0;
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       contents += data.contents.toString();
     });
 
@@ -462,7 +462,7 @@ describe('gulp-manifest', function() {
       done();
     });
 
-    stream.write(new gutil.File({
+    stream.write(new Vinyl({
       path: 'foobar',
       base: path.resolve('./'),
       contents: new Buffer('notimportant')
@@ -478,7 +478,7 @@ describe('gulp-manifest', function() {
     });
 
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       data.relative.should.eql('cache.manifest');
 
       var contents = data.contents.toString();
@@ -498,7 +498,7 @@ describe('gulp-manifest', function() {
     });
 
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       data.relative.should.eql('cache.manifest');
 
       var contents = data.contents.toString();
@@ -519,7 +519,7 @@ describe('gulp-manifest', function() {
     });
 
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       data.relative.should.eql('cache.manifest');
 
       var contents = data.contents.toString();
@@ -540,7 +540,7 @@ describe('gulp-manifest', function() {
     });
 
     stream.on('data', function(data) {
-      data.should.be.an.instanceOf(gutil.File);
+      data.should.be.an.instanceOf(Vinyl);
       data.relative.should.eql('cache.manifest');
 
       var contents = data.contents.toString();

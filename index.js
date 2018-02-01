@@ -1,12 +1,14 @@
 "use strict";
 
 var through   = require('through'),
-    gutil     = require('gulp-util'),
-    crypto    = require('crypto'),
-    path      = require('path'),
-    minimatch = require('minimatch'),
-    slash     = require('slash'),
-    lineBreak = '\n';
+    log         = require('fancy-log'),
+    PluginError = require('plugin-error'),
+    Vinyl       = require('vinyl'),
+    crypto      = require('crypto'),
+    path        = require('path'),
+    minimatch   = require('minimatch'),
+    slash       = require('slash'),
+    lineBreak   = '\n';
 
 function manifest(options) {
   var filename, exclude, cache, include, hasher, cwd, contents, timestamp;
@@ -14,7 +16,7 @@ function manifest(options) {
   options = options || {};
 
   if(options.basePath) {
-    gutil.log('basePath option is deprecated. Consider using gulp.src base instead: https://github.com/gulpjs/gulp/blob/master/docs/API.md#optionsbase');
+    log('basePath option is deprecated. Consider using gulp.src base instead: https://github.com/gulpjs/gulp/blob/master/docs/API.md#optionsbase');
   }
 
   filename = options.filename || 'app.manifest';
@@ -53,7 +55,7 @@ function manifest(options) {
     var prefix, suffix, filepath;
 
     if (file.isNull())   return;
-    if (file.isStream()) return this.emit('error', new gutil.PluginError('gulp-manifest',  'Streaming not supported'));
+    if (file.isStream()) return this.emit('error', new PluginError('gulp-manifest',  'Streaming not supported'));
 
     prefix = slash(options.prefix || '');
     suffix = slash(options.suffix || '');
@@ -97,7 +99,7 @@ function manifest(options) {
         var firstSpace = file.indexOf(' ');
 
         if (firstSpace === -1) {
-          return gutil.log('Invalid format for FALLBACK entry', file);
+          return log('Invalid format for FALLBACK entry', file);
         }
 
         contents.push(
@@ -121,7 +123,7 @@ function manifest(options) {
       contents.push('# hash: ' + hasher.digest("hex"));
     }
 
-    var manifestFile = new gutil.File({
+    var manifestFile = new Vinyl({
       cwd: cwd,
       base: cwd,
       path: path.join(cwd, filename),

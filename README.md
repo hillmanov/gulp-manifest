@@ -1,4 +1,7 @@
-# gulp-manifest
+# gulp-manifest3
+
+Same as gulp-manifest by Scott Hillman (see below), but with gutil removed as a dependency. This package is only for circumventing an issue with gutil.
+
 > Generate HTML5 Cache Manifest files. Submitted by [Scott Hillman](https://github.com/hillmanov/).
 
 Big thanks to [Gunther Brunner](https://github.com/gunta/) for writing the [grunt-manifest](https://github.com/gunta/grunt-manifest) plugin. This plugin was heavily influenced by his great work.
