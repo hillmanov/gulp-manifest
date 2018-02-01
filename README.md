@@ -1,4 +1,4 @@
-# gulp-manifest (2)
+# gulp-manifest3
 
 Same as gulp-manifest by Scott Hillman (see below), but with gutil removed as a dependency. This package is only for circumventing an issue with gutil.
 
