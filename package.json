@@ -24,13 +24,13 @@
   "readmeFilename": "README.md",
   "devDependencies": {
     "event-stream": "^3.1.7",
-    "mocha": "~1.16.2",
-    "should": "~2.1.1",
-    "gulp": "^3.9.0"
+    "gulp": "^4.0.0",
+    "mocha": "^5.2.0",
+    "should": "~2.1.1"
   },
   "dependencies": {
     "gulp-util": "~2.2.6",
-    "minimatch": "~2.0.1",
+    "minimatch": "^3.0.4",
     "slash": "^1.0.0",
     "through": "~2.3.4"
   },
