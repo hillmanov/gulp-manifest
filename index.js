@@ -6,6 +6,7 @@ var through   = require('through'),
     path      = require('path'),
     minimatch = require('minimatch'),
     slash     = require('slash'),
+    Vinyl     = require('vinyl'),
     lineBreak = '\n';
 
 function manifest(options) {
@@ -121,7 +122,7 @@ function manifest(options) {
       contents.push('# hash: ' + hasher.digest("hex"));
     }
 
-    var manifestFile = new gutil.File({
+    var manifestFile = new Vinyl({
       cwd: cwd,
       base: cwd,
       path: path.join(cwd, filename),

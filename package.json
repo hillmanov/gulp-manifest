@@ -32,7 +32,8 @@
     "gulp-util": "~2.2.6",
     "minimatch": "~2.0.1",
     "slash": "^1.0.0",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "vinyl": "^2.2.0"
   },
   "bugs": {
     "url": "https://github.com/hillmanov/gulp-manifest/issues"
