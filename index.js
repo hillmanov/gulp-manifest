@@ -38,17 +38,6 @@ function manifest(options) {
 
   contents.push('');
   contents.push('CACHE:');
-
-  contents = contents.concat(include);
-
-  cache.forEach(function (file) {
-    contents.push(encodeURI(file));
-  });
-
-  function shouldExcludeFile(filePath) {
-    return exclude.some(minimatch.bind(null, filePath));
-  }
-
   function writeToManifest(file) {
     var prefix, suffix, filepath;
 
@@ -62,16 +51,6 @@ function manifest(options) {
     if (shouldExcludeFile(filepath)) {
       return;
     }
-
-    if(options.basePath) { // deprecated
-      var relative = path.relative(file.base, __dirname);
-      filepath = filepath.replace(new RegExp('^' + path.join(relative, options.basePath)), '');
-    }
-
-    filepath = [prefix, filepath, suffix].join('');
-
-    contents.push(encodeURI(filepath));
-
     if (options.hash) {
       hasher.update(file.contents, 'binary');
     }
